@@ -1,0 +1,290 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Josephine & Jeffrey — Design System
+   Palette drawn from the couple's color portrait:
+   deep forest/olive, warm gold, burgundy, ivory.
+   ============================================================ */
+
+@theme {
+  /* Core ink + paper */
+  --color-ink: #20231a;
+  --color-ink-soft: #45483c;
+  --color-ivory: #f7f2e7;
+  --color-cream: #efe6d4;
+  --color-parchment: #e8dcc4;
+
+  /* Greens (from the olive backdrop) */
+  --color-forest: #161d14;
+  --color-forest-2: #1f2a1b;
+  --color-olive: #34422b;
+  --color-olive-2: #46552f;
+  --color-sage: #8c9a78;
+  --color-sage-light: #bcc6a8;
+
+  /* Gold / champagne accents */
+  --color-gold: #b89150;
+  --color-gold-deep: #9a7637;
+  --color-gold-light: #ddc188;
+  --color-champagne: #ecdcb8;
+
+  /* Burgundy / wine (from the red print) */
+  --color-wine: #6f2330;
+  --color-wine-light: #913645;
+
+  /* Fonts (wired up in layout.tsx) */
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-jost), "Jost", ui-sans-serif, system-ui, sans-serif;
+  --font-script: var(--font-pinyon), "Pinyon Script", cursive;
+
+  --shadow-lux: 0 30px 80px -40px rgba(22, 29, 20, 0.55);
+  --shadow-soft: 0 18px 50px -30px rgba(22, 29, 20, 0.4);
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-ivory);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.01em;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serif);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-forest);
+  }
+
+  /* Refined scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-cream); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-sage);
+    border-radius: 999px;
+    border: 2px solid var(--color-cream);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-olive); }
+
+  input, button, textarea, select { font-family: inherit; }
+}
+
+/* ---------- Reusable components ---------- */
+@layer components {
+  /* small uppercase label */
+  .eyebrow {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.42em;
+    font-size: 0.7rem;
+    font-weight: 400;
+    color: var(--color-gold-deep);
+  }
+
+  /* gold divider with center diamond */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    color: var(--color-gold);
+  }
+  .ornament::before,
+  .ornament::after {
+    content: "";
+    height: 1px;
+    width: clamp(2.5rem, 12vw, 7rem);
+    background: linear-gradient(
+      to var(--dir, right),
+      transparent,
+      color-mix(in srgb, currentColor 70%, transparent)
+    );
+  }
+  .ornament::before { --dir: left; }
+
+  /* Premium buttons */
+  .btn-gold {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1rem 2.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-forest);
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold) 55%, var(--color-gold-deep));
+    border: 1px solid color-mix(in srgb, var(--color-gold-deep) 60%, transparent);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.4s, filter 0.4s;
+    box-shadow: var(--shadow-soft);
+    overflow: hidden;
+  }
+  .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.05); box-shadow: var(--shadow-lux); }
+  .btn-gold:active { transform: translateY(0); }
+  .btn-gold:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.95rem 2.2rem;
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    background: transparent;
+    border: 1px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .btn-outline:hover {
+    background: color-mix(in srgb, var(--color-gold) 12%, transparent);
+    border-color: var(--color-gold);
+    transform: translateY(-2px);
+  }
+  .btn-ghost-light {
+    color: var(--color-champagne);
+    border-color: color-mix(in srgb, var(--color-champagne) 45%, transparent);
+  }
+  .btn-ghost-light:hover {
+    background: color-mix(in srgb, var(--color-champagne) 14%, transparent);
+    border-color: var(--color-champagne);
+  }
+
+  /* Luxe card */
+  .card-lux {
+    background: linear-gradient(180deg, #fffdf8, var(--color-ivory));
+    border: 1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
+    border-radius: 4px;
+    box-shadow: var(--shadow-soft);
+  }
+
+  /* Animated gold text for the monogram / accents */
+  .shimmer-text {
+    background: linear-gradient(
+      100deg,
+      var(--color-gold-deep) 10%,
+      var(--color-gold-light) 35%,
+      #fff4d8 50%,
+      var(--color-gold-light) 65%,
+      var(--color-gold-deep) 90%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+
+  .field {
+    width: 100%;
+    background: #fffdf8;
+    border: 1px solid color-mix(in srgb, var(--color-olive) 22%, transparent);
+    border-radius: 3px;
+    padding: 0.85rem 1rem;
+    color: var(--color-ink);
+    font-size: 1rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .field:focus {
+    outline: none;
+    border-color: var(--color-gold);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-gold) 22%, transparent);
+  }
+  .field::placeholder { color: color-mix(in srgb, var(--color-ink) 38%, transparent); }
+}
+
+/* ---------- Utilities ---------- */
+@layer utilities {
+  .font-serif { font-family: var(--font-serif); }
+  .font-sans { font-family: var(--font-sans); }
+  .font-script { font-family: var(--font-script); }
+
+  /* Subtle film grain overlay */
+  .grain::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .text-shadow-lux { text-shadow: 0 2px 30px rgba(0, 0, 0, 0.45); }
+}
+
+/* ---------- Keyframes ---------- */
+@keyframes shimmer {
+  to { background-position: 220% center; }
+}
+@keyframes kenburns {
+  0% { transform: scale(1.05) translateY(0); }
+  100% { transform: scale(1.18) translateY(-2%); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes fade-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-kenburns { animation: kenburns 22s ease-out forwards alternate; }
+.animate-floaty { animation: floaty 4s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-kenburns { animation: none; transform: scale(1.05); }
+}
+
+/* ============================================================
+   PRINT — turns /program into an elegant printable / PDF sheet
+   ============================================================ */
+@media print {
+  @page { size: A4; margin: 14mm; }
+
+  body { background: #fff !important; }
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+
+  .print-sheet {
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+  .print-avoid-break { break-inside: avoid; }
+  a[href]::after { content: ""; }
+}
+.print-only { display: none; }

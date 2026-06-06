@@ -1,0 +1,28 @@
+{
+  "ceremony": [
+    { "time": "2:30 PM", "title": "Arrival & Seating of Guests", "description": "Soft strings welcome you. Kindly be seated by 2:45." },
+    { "time": "3:00 PM", "title": "The Processional", "description": "The bridal party makes their entrance." },
+    { "time": "3:10 PM", "title": "Entrance of the Bride", "description": "All rise for Josephine." },
+    { "time": "3:15 PM", "title": "Opening Prayer & Welcome", "description": "A word of grace to begin." },
+    { "time": "3:25 PM", "title": "Hymn & Worship", "description": "Lifting our voices together." },
+    { "time": "3:35 PM", "title": "Scripture Reading", "description": "1 Corinthians 13 · The Greatest of These." },
+    { "time": "3:45 PM", "title": "The Charge & Homily", "description": "A message for the couple." },
+    { "time": "4:00 PM", "title": "Exchange of Vows", "description": "Promises spoken from the heart." },
+    { "time": "4:10 PM", "title": "Exchange of Rings", "description": "A token of endless love." },
+    { "time": "4:15 PM", "title": "Pronouncement & First Kiss", "description": "Husband and wife." },
+    { "time": "4:20 PM", "title": "Signing of the Register", "description": "Making it official." },
+    { "time": "4:30 PM", "title": "Presentation & Recessional", "description": "Presenting Mr. & Mrs. — let the celebration begin." }
+  ],
+  "reception": [
+    { "time": "5:00 PM", "title": "Cocktail Hour", "description": "Canapés & signature drinks on the terrace." },
+    { "time": "6:00 PM", "title": "Grand Entrance of the Newlyweds", "description": "Please rise to welcome the couple." },
+    { "time": "6:10 PM", "title": "Welcome Address & Blessing", "description": "Grace over the meal." },
+    { "time": "6:20 PM", "title": "Dinner is Served", "description": "A three-course celebration dinner." },
+    { "time": "7:00 PM", "title": "Toasts & Tributes", "description": "Words from those who love them most." },
+    { "time": "7:30 PM", "title": "Cutting of the Cake", "description": "The first sweet moment as one." },
+    { "time": "7:40 PM", "title": "The First Dance", "description": "Their very first dance as husband and wife." },
+    { "time": "8:00 PM", "title": "Dancing & Celebration", "description": "The floor is open — let's celebrate!" },
+    { "time": "9:30 PM", "title": "Bouquet Toss", "description": "Who's next?" },
+    { "time": "10:00 PM", "title": "The Grand Send-Off", "description": "A sparkler farewell to the happy couple." }
+  ]
+}

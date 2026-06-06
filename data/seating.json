@@ -1,0 +1,259 @@
+{
+  "tables": [
+    {
+      "id": 1,
+      "label": "Table 1",
+      "category": "Church Leaders",
+      "guests": [
+        "Rev. Saka Ntiamoah",
+        "Mrs Saka Ntiamoah",
+        "Ps. Prince Nana Kobi",
+        "Mrs Philomena Kobi",
+        "Ps. Richard Owusu",
+        "Faustin Kuoakou Ndjore",
+        "Amenan Ndjore",
+        "Safi Biney",
+        "George Biney",
+        "Hayford Ansah"
+      ]
+    },
+    {
+      "id": 2,
+      "label": "Table 2",
+      "category": "Couple Parents",
+      "guests": [
+        "Paul Mensah",
+        "Gina Mensah",
+        "Peter Sosi",
+        "Ogboo Sosi",
+        "Joseph Prempeh",
+        "Ivy Prempeh",
+        "Kwame Martin Karikari",
+        "Helena Karikari",
+        "Kofi Odame-Akyeampong",
+        "Ellen Odame-Akyeampong"
+      ]
+    },
+    {
+      "id": 3,
+      "label": "Table 3",
+      "category": "Couple Parents",
+      "guests": [
+        "Henrietta Aggrey",
+        "Bridget Asare",
+        "Mohammed Adjei",
+        "Shila Adjei",
+        "Makafui Azaaso",
+        "Ebenezer Amoh",
+        "Grace-Mary Amoh",
+        "Rhoda Quarshie",
+        "Isaac Owusu",
+        "Ama Kissiwaa"
+      ]
+    },
+    {
+      "id": 4,
+      "label": "Table 4",
+      "category": "Couple Siblings",
+      "guests": [
+        "Freeman Dwamena",
+        "Judy Dwamena",
+        "Robin Singer",
+        "Stephen Acheampong",
+        "Sandra Mensah",
+        "Priscilla Mensah",
+        "Dafna Karikari",
+        "Frank Kwarteng",
+        "Teju Olateju",
+        "Nhyira Owusu"
+      ]
+    },
+    {
+      "id": 5,
+      "label": "Table 5",
+      "category": "Couple Siblings",
+      "guests": [
+        "Job Boateng",
+        "Anita Boateng",
+        "Nii Tagoe",
+        "Emmanuel Odame",
+        "Sophia Odame",
+        "Sandra Niboi",
+        "Edmund Niboi",
+        "Rebecca Niboi",
+        "Emmanuella Sackey",
+        "Julianna Ndjore"
+      ]
+    },
+    {
+      "id": 6,
+      "label": "Table 6",
+      "category": "Bridal Party 1",
+      "guests": [
+        "Francis Aggrey",
+        "Simi Olateju",
+        "Eli Asare",
+        "Comfort Mensah",
+        "Alexander Asare",
+        "Tolu Olateju",
+        "Kofi Gyimah",
+        "Andreia Feliciano",
+        "Emmanuel Yeboah",
+        "Josephine Akoto"
+      ]
+    },
+    {
+      "id": 7,
+      "label": "Table 7",
+      "category": "Bridal Party 1",
+      "guests": [
+        "Ralph Adjetey",
+        "Abigail Adjetey",
+        "Albert Ashong",
+        "Naana Ashong",
+        "Ato Boyan",
+        "Yvonne Boyan",
+        "Asante Mensah",
+        "Grace Mensah",
+        "Sarah Tachie-Mensah",
+        "Patrick Tachie-Mensah"
+      ]
+    },
+    {
+      "id": 8,
+      "label": "Table 8",
+      "category": "Bridal Party 2",
+      "guests": [
+        "Maame Yaa Arthur",
+        "Crícia Feliciano",
+        "Esther Ashley",
+        "Manuela Sosi",
+        "Sarah Brakoh",
+        "Davis Torgah",
+        "Abigail Torgah",
+        "Seth Okyere",
+        "Mimi Asare",
+        "Perry Sosi"
+      ]
+    },
+    {
+      "id": 9,
+      "label": "Table 9",
+      "category": "Parents+Kids(0-3)",
+      "guests": [
+        "Edna Abrah-Asiedu",
+        "Kwabena Abrah-Asiedu",
+        "Emmanuel Amponsah",
+        "Judith Amponsah",
+        "Max Tsatsu",
+        "Pearl Tsatsu",
+        "Lovefelia Dunoh",
+        "Amah Dunoh",
+        "Mavis Amoah",
+        "Emmanuel Amoah"
+      ]
+    },
+    {
+      "id": 10,
+      "label": "Table 10",
+      "category": "Close Family",
+      "guests": [
+        "Leticia Acheampong",
+        "Lawrence Adusei",
+        "Prince Acheampong",
+        "Gloria Acheampong",
+        "Victoria Nkrumah",
+        "Kofi Nkrumah",
+        "Oumar Cherif",
+        "Steve Kelly",
+        "Amanda Kelly"
+      ]
+    },
+    {
+      "id": 11,
+      "label": "Table 11",
+      "category": "Family & Friends",
+      "guests": [
+        "Godfrey Okyere-Asiedu",
+        "Gloria Okyere-Asiedu",
+        "Samuel Obeng-Bonah",
+        "Lydia Obeng-Bonah",
+        "Mama Felicia Buabeng",
+        "Mr Buabeng",
+        "Hilda Koomson",
+        "Benjamin Koomson",
+        "Mama Comfort",
+        "Albert Boateng",
+        "Ruth Boateng"
+      ]
+    },
+    {
+      "id": 12,
+      "label": "Table 12",
+      "category": "Family & Friends",
+      "guests": [
+        "Indra Bumtsetseg",
+        "Jessica Lloyd",
+        "George Hassan",
+        "Brandon Whitaker",
+        "Leotrim Osmani",
+        "Brittany Osmani",
+        "Jones Amaniampong",
+        "Victoria Amaniampong",
+        "Linda Kusi",
+        "Patience Ofori-Attah"
+      ]
+    },
+    {
+      "id": 13,
+      "label": "Table 13",
+      "category": "Family & Friends",
+      "guests": [
+        "Clara Oteng",
+        "Emmanuel Oteng",
+        "Rhudi Quaye",
+        "Cindy Coleman",
+        "Obed Agyei",
+        "Farouk Busari",
+        "Kuzco Maveneke",
+        "Papa Kwadwo Morgan-Asiedu",
+        "Felix Amankwah",
+        "Samelle Amankwah"
+      ]
+    },
+    {
+      "id": 14,
+      "label": "Table 14",
+      "category": "Family & Friends",
+      "guests": [
+        "William Essa",
+        "Bless Obro-Adibo",
+        "Bernice Baah",
+        "Derrick Baah",
+        "Jemimah Frempong",
+        "Nana Yaw Asare",
+        "Irene Frempong",
+        "Benevides Feliciano",
+        "Adriana Feliciano",
+        "Barbara Feliciano"
+      ]
+    },
+    {
+      "id": 15,
+      "label": "Table 15",
+      "category": "Family & Friends",
+      "guests": [
+        "Gideon Tuffour",
+        "Enoch Tuffour",
+        "Helena Ankrah",
+        "Priscilla Baah",
+        "Samuel Baah",
+        "Adjoa Appiah",
+        "Rhoda Moh",
+        "Nii Lartey",
+        "Megan Boateng",
+        "Aniekan Ekanem"
+      ]
+    }
+  ]
+}
