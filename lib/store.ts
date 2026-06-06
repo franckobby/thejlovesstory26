@@ -1,6 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { Redis } from "@upstash/redis";
+import { neon } from "@neondatabase/serverless";
 import seatingSeed from "@/data/seating.json";
 import eventSeed from "@/data/event.json";
 import programSeed from "@/data/program.json";
@@ -9,19 +9,19 @@ import type { AppData, EventDetails, ProgramData, Table } from "./types";
 /**
  * Data store with two backends, chosen automatically:
  *
- *  • Production (Vercel): if KV / Upstash Redis env vars are present, all data
- *    lives in a single JSON blob in Redis. On first read it's seeded from the
- *    bundled data/*.json so the deployed site starts with the current seating.
- *    This is what makes admin "Save" persist on a read-only serverless host.
+ *  • Production (Vercel): if a Postgres connection string is present (Neon), all
+ *    data lives as a single JSONB row. On first read it's seeded from the bundled
+ *    data/*.json so the deployed site starts with the current seating. This is
+ *    what makes admin "Save" persist on a read-only serverless host.
  *
- *  • Local dev: with no KV env vars, it reads/writes the data/*.json files, so
+ *  • Local dev: with no DATABASE_URL, it reads/writes the data/*.json files, so
  *    editing in /admin persists to disk while you work locally.
  *
- * Create a Redis (KV) store in the Vercel dashboard → Storage tab and connect it
- * to the project; it injects the env vars below automatically.
+ * Create a Neon Postgres database in the Vercel dashboard → Storage tab and
+ * connect it to the project; it injects DATABASE_URL automatically.
  */
 
-const KEY = "thejlovesstory:appdata:v1";
+const ROW_ID = "main";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const SEATING_FILE = path.join(DATA_DIR, "seating.json");
@@ -37,13 +37,21 @@ function seedData(): AppData {
   };
 }
 
-/** A Redis client if KV/Upstash env vars are configured, else null. */
-function getRedis(): Redis | null {
-  const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;
-  const token =
-    process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
-  return new Redis({ url, token });
+function databaseUrl(): string | undefined {
+  return (
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    process.env.POSTGRES_PRISMA_URL ||
+    process.env.POSTGRES_URL_NON_POOLING ||
+    process.env.DATABASE_URL_UNPOOLED
+  );
+}
+
+/** A Neon SQL client if a connection string is configured, else null. */
+function getSql() {
+  const url = databaseUrl();
+  if (!url) return null;
+  return neon(url);
 }
 
 async function readJSON<T>(file: string): Promise<T> {
@@ -55,12 +63,17 @@ async function writeJSON(file: string, data: unknown): Promise<void> {
 }
 
 export async function getAllData(): Promise<AppData> {
-  const redis = getRedis();
-  if (redis) {
-    const stored = await redis.get<AppData>(KEY);
+  const sql = getSql();
+  if (sql) {
+    await sql`CREATE TABLE IF NOT EXISTS app_state (id text PRIMARY KEY, data jsonb NOT NULL)`;
+    const rows = await sql`SELECT data FROM app_state WHERE id = ${ROW_ID}`;
+    const stored = (rows[0]?.data ?? null) as AppData | null;
     if (stored && Array.isArray(stored.tables)) return stored;
+
     const seeded = seedData();
-    await redis.set(KEY, seeded);
+    await sql`INSERT INTO app_state (id, data) VALUES (${ROW_ID}, ${JSON.stringify(
+      seeded
+    )}::jsonb) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data`;
     return seeded;
   }
 
@@ -78,9 +91,12 @@ export async function getAllData(): Promise<AppData> {
 }
 
 export async function saveAllData(data: AppData): Promise<void> {
-  const redis = getRedis();
-  if (redis) {
-    await redis.set(KEY, data);
+  const sql = getSql();
+  if (sql) {
+    await sql`CREATE TABLE IF NOT EXISTS app_state (id text PRIMARY KEY, data jsonb NOT NULL)`;
+    await sql`INSERT INTO app_state (id, data) VALUES (${ROW_ID}, ${JSON.stringify(
+      data
+    )}::jsonb) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data`;
     return;
   }
   await Promise.all([

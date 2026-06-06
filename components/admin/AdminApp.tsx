@@ -6,13 +6,7 @@ import { QRPanel } from "./QRPanel";
 
 type Tab = "seating" | "details" | "programme" | "share";
 
-export function AdminApp({
-  initial,
-  onLogout,
-}: {
-  initial: AppData;
-  onLogout: () => void;
-}) {
+export function AdminApp({ initial }: { initial: AppData }) {
   const [data, setData] = useState<AppData>(initial);
   const [dirty, setDirty] = useState(false);
   const [tab, setTab] = useState<Tab>("seating");
@@ -124,11 +118,6 @@ export function AdminApp({
     }
   }
 
-  async function logout() {
-    await fetch("/api/auth", { method: "DELETE" });
-    onLogout();
-  }
-
   const q = query.trim().toLowerCase();
 
   return (
@@ -165,12 +154,6 @@ export function AdminApp({
             >
               View site ↗
             </a>
-            <button
-              onClick={logout}
-              className="text-[0.68rem] uppercase tracking-[0.18em] text-champagne/70 transition-colors hover:text-gold-light"
-            >
-              Log out
-            </button>
             <button
               onClick={save}
               disabled={!dirty || saving}

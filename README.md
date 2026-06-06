@@ -2,8 +2,8 @@
 
 A premium wedding web app. Guests scan a QR code, type their name, and instantly
 see their table and tablemates. They can also view and download the order of
-service. A private, password-protected admin lets the couple/planners adjust
-seating, edit event details, and edit the program at any time.
+service. An admin screen lets the couple/planners adjust seating, edit event
+details, and edit the program at any time.
 
 Built with **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · Framer Motion**.
 
@@ -11,11 +11,11 @@ Built with **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 ·
 
 ## Pages
 
-| Route       | Who         | What                                                                 |
-| ----------- | ----------- | ------------------------------------------------------------------- |
-| `/`         | Guests      | Cinematic landing, **Find Your Seat** (fuzzy name search → table reveal), countdown, gallery, details. |
-| `/program`  | Guests      | The order of service — view on screen or **Download / Print** (PDF). |
-| `/admin`    | Couple only | Password-gated **Seating Manager**: drag-and-drop seating, event details, program editor, and a **QR code generator**. |
+| Route       | Who              | What                                                                 |
+| ----------- | ---------------- | ------------------------------------------------------------------- |
+| `/`         | Guests           | Cinematic landing, **Find Your Seat** (fuzzy name search → table reveal), countdown, gallery, details. |
+| `/program`  | Guests           | The order of service — view on screen or **Download / Print** (PDF). |
+| `/admin`    | Couple / planner | **Seating Manager** (open, no password): drag-and-drop seating, event details, program editor, and a **QR code generator**. |
 
 ---
 
@@ -30,17 +30,13 @@ Open **http://localhost:3000**.
 
 - Guest site: http://localhost:3000
 - Program: http://localhost:3000/program
-- Admin: http://localhost:3000/admin
+- Admin: http://localhost:3000/admin (no login)
 
-### Admin password
+### Admin access
 
-Set in `.env.local`:
-
-```
-ADMIN_PASSWORD=lovejj2026
-```
-
-**Change this** before sharing anything. (`.env.local` is git-ignored.)
+The admin is **open** — anyone with the `/admin` link can edit the seating. This
+is intentional for this low-risk use. To lock it later (a password or an
+unguessable secret URL), just ask. No env vars are needed for local dev.
 
 ---
 
@@ -75,23 +71,21 @@ The project deploys from GitHub — every push to `main` triggers a deploy.
 
 ### Persistence (already wired up)
 
-`lib/store.ts` automatically uses **Redis (KV)** when its env vars are present,
-and falls back to the local `data/*.json` files for development. So admin **Save**
-persists on Vercel once you add a KV store:
+`lib/store.ts` automatically uses **Neon Postgres** when a connection string is
+present, and falls back to the local `data/*.json` files for development. So
+admin **Save** persists on Vercel once you add a database:
 
 1. Vercel dashboard → your project → **Storage** → **Create Database** →
-   **Upstash → Redis** (a.k.a. KV). Accept the defaults and **Connect** it to
-   this project. This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`
-   automatically. (The code also accepts `UPSTASH_REDIS_REST_URL` /
-   `UPSTASH_REDIS_REST_TOKEN`.)
-2. Add an **`ADMIN_PASSWORD`** environment variable (Settings → Environment
-   Variables).
-3. **Redeploy** (Deployments → latest → ⋯ → Redeploy) so the new env vars take
+   **Neon** (Serverless Postgres). Accept the defaults and **Connect** it to the
+   project (all environments). This injects **`DATABASE_URL`** (plus a few
+   `POSTGRES_*` vars) automatically — the code reads whichever is set.
+2. **Redeploy** (Deployments → latest → ⋯ → Redeploy) so the new env var takes
    effect.
 
-On the first load after that, the KV store is **seeded automatically** from the
-data in this repo, so the live site starts with your current seating. From then
-on, admin edits are saved to KV and survive redeploys.
+On the first load after that, the database is **seeded automatically** (a single
+`app_state` JSONB row) from the data in this repo, so the live site starts with
+your current seating. From then on, admin edits are saved to Postgres and survive
+redeploys.
 
 > No database? You can instead edit the `data/*.json` files locally, commit, and
 > push — each deploy ships the latest seating (but the deployed `/admin` won't be
@@ -105,16 +99,14 @@ on, admin edits are saved to KV and survive redeploys.
 app/
   page.tsx            Guest landing
   program/page.tsx    Order of service (+ print to PDF)
-  admin/page.tsx      Admin gate → dashboard
-  api/seat            Guest seat search (public)
-  api/admin           Read/save all data (auth-protected)
-  api/auth            Admin login / logout
+  admin/page.tsx      Admin dashboard (open)
+  api/seat            Guest seat search
+  api/admin           Read/save all data
   globals.css         Design system (palette, type, components)
 components/           Hero, FindSeat, Gallery, Countdown, admin/*, …
 lib/
-  store.ts            JSON data store  ← swap for a DB when deploying
+  store.ts            Data store — Neon Postgres in prod, data/*.json locally
   match.ts            Fuzzy guest-name matching (typo tolerant)
-  auth.ts             Admin session
   types.ts            Shared types
 data/                 seating.json · event.json · program.json
 public/images/        Optimized couple photos
