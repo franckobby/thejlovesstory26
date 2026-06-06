@@ -66,7 +66,7 @@ export function QRPanel() {
           <h3 className="mt-3 font-serif text-2xl text-ink">Your QR Code</h3>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
             Print this code on table cards or place it at the entrance. Guests
-            scan it to find their seat and view the order of service.
+            scan it to find their seat and view the schedule.
           </p>
 
           <label className="mt-6 block text-[0.65rem] uppercase tracking-[0.2em] text-gold-deep">

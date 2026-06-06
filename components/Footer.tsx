@@ -22,7 +22,7 @@ export function Footer({ event }: { event: EventDetails }) {
           </Link>
           <span className="text-sage/50">·</span>
           <Link href="/program" className="transition-colors hover:text-gold-light">
-            Order of Service
+            Schedule
           </Link>
         </div>
         <p className="mt-12 text-[0.65rem] uppercase tracking-[0.25em] text-champagne/35">

@@ -32,11 +32,11 @@ const pinyon = Pinyon_Script({
 export const metadata: Metadata = {
   title: "Josephine & Jeffrey · A Celebration of Love",
   description:
-    "Welcome to the wedding of Josephine & Jeffrey. Find your seat, view the order of service, and celebrate with us.",
+    "Welcome to the wedding of Josephine & Jeffrey. Find your seat, view the schedule, and celebrate with us.",
   openGraph: {
     title: "Josephine & Jeffrey · A Celebration of Love",
     description:
-      "Find your seat and view the order of service for the wedding of Josephine & Jeffrey.",
+      "Find your seat and view the schedule for the wedding of Josephine & Jeffrey.",
     type: "website",
   },
   icons: {

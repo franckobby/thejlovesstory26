@@ -84,7 +84,7 @@ export default async function Home() {
 
         <Gallery hashtag={event.hashtag} />
 
-        {/* Order of Service invitation */}
+        {/* Schedule invitation */}
         <section className="relative overflow-hidden bg-forest-2 text-champagne">
           <div className="mx-auto grid max-w-6xl items-stretch md:grid-cols-2">
             <div className="relative h-72 md:h-[34rem]">
@@ -101,10 +101,10 @@ export default async function Home() {
             <div className="flex flex-col justify-center px-8 py-16 text-center md:px-14 md:text-left">
               <Reveal>
                 <p className="eyebrow" style={{ color: "var(--color-gold-light)" }}>
-                  The Programme
+                  The Day
                 </p>
                 <h2 className="mt-4 text-4xl text-champagne sm:text-5xl">
-                  Order of Service
+                  The Schedule
                 </h2>
                 <div className="mx-auto my-6 h-px w-16 bg-gold-light/60 md:mx-0" />
                 <p className="mx-auto max-w-md font-serif text-lg italic leading-relaxed text-champagne/80 md:mx-0">
@@ -114,7 +114,7 @@ export default async function Home() {
                 </p>
                 <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row md:items-start">
                   <Link href="/program" className="btn-gold">
-                    View the Order of Service
+                    View the Schedule
                   </Link>
                 </div>
               </Reveal>

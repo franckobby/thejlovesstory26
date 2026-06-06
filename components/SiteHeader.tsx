@@ -50,7 +50,7 @@ export function SiteHeader({
             href="/program"
             className="text-[0.7rem] uppercase tracking-[0.22em] text-champagne/90 transition-colors hover:text-gold-light"
           >
-            Order of Service
+            Schedule
           </Link>
         </nav>
       </div>

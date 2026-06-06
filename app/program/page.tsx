@@ -6,8 +6,8 @@ import { Ornament } from "@/components/Ornament";
 import type { ProgramItem } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Order of Service · Josephine & Jeffrey",
-  description: "The order of service for the wedding of Josephine & Jeffrey.",
+  title: "Schedule · Josephine & Jeffrey",
+  description: "The schedule for the wedding of Josephine & Jeffrey.",
 };
 
 export const dynamic = "force-dynamic";

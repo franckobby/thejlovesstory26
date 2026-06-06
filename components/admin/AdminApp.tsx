@@ -187,7 +187,7 @@ export function AdminApp({
             [
               ["seating", "Seating"],
               ["details", "Event Details"],
-              ["programme", "Programme"],
+              ["programme", "Schedule"],
               ["share", "QR & Share"],
             ] as [Tab, string][]
           ).map(([key, label]) => (
@@ -441,7 +441,7 @@ function EventEditor({
     <div className="mx-auto max-w-3xl">
       <h2 className="mb-1 font-serif text-2xl text-ink">Event Details</h2>
       <p className="mb-6 text-sm text-ink-soft">
-        These appear across the guest site and the order of service.
+        These appear across the guest site and the schedule.
       </p>
       <div className="grid gap-5 sm:grid-cols-2">
         {EVENT_FIELDS.map(([field, label]) => (
@@ -524,7 +524,7 @@ function ProgrammeEditor({
 
   return (
     <div className="mx-auto max-w-3xl">
-      <h2 className="mb-1 font-serif text-2xl text-ink">Order of Service</h2>
+      <h2 className="mb-1 font-serif text-2xl text-ink">Schedule</h2>
       <p className="mb-6 text-sm text-ink-soft">
         Edit the timeline guests see and print.
       </p>

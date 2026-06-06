@@ -79,7 +79,7 @@ export function Hero({ event }: { event: EventDetails }) {
               Find Your Seat
             </a>
             <a href="/program" className="btn-outline btn-ghost-light">
-              Order of Service
+              Schedule
             </a>
           </div>
         </Reveal>
