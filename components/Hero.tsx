@@ -1,20 +1,7 @@
-"use client";
-
 import Image from "next/image";
-import { motion } from "framer-motion";
 import type { EventDetails } from "@/lib/types";
 import { Ornament } from "./Ornament";
-
-const EASE = [0.2, 0.8, 0.2, 1] as const;
-
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.16, delayChildren: 0.2 } },
-};
-const item = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 1, ease: EASE } },
-};
+import { Reveal } from "./Reveal";
 
 export function Hero({ event }: { event: EventDetails }) {
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
@@ -31,7 +18,7 @@ export function Hero({ event }: { event: EventDetails }) {
         <div className="absolute inset-0 animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
-            alt={`${event.coupleNames}`}
+            alt={event.coupleNames}
             fill
             priority
             sizes="100vw"
@@ -50,64 +37,53 @@ export function Hero({ event }: { event: EventDetails }) {
       <div className="pointer-events-none absolute inset-4 z-10 border border-gold/10 sm:inset-6" />
 
       {/* Content */}
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="relative z-20 flex flex-col items-center px-6 text-center text-champagne"
-      >
-        <motion.p
-          variants={item}
-          className="eyebrow text-gold-light/90"
-          style={{ color: "var(--color-gold-light)" }}
-        >
-          Together with their families
-        </motion.p>
+      <div className="relative z-20 flex flex-col items-center px-6 text-center text-champagne">
+        <Reveal delay={0.15} y={16}>
+          <p className="eyebrow" style={{ color: "var(--color-gold-light)" }}>
+            Together with their families
+          </p>
+        </Reveal>
 
-        <motion.div
-          variants={item}
-          className="mt-7 flex flex-col items-center leading-[0.95]"
-        >
-          <span className="font-serif text-6xl font-light tracking-tight text-shadow-lux sm:text-8xl">
-            {event.bride}
-          </span>
-          <span className="my-1 font-script text-5xl text-gold-light text-shadow-lux sm:my-2 sm:text-7xl">
-            &amp;
-          </span>
-          <span className="font-serif text-6xl font-light tracking-tight text-shadow-lux sm:text-8xl">
-            {event.groom}
-          </span>
-        </motion.div>
+        <Reveal delay={0.3} y={18} className="mt-7">
+          <div className="flex flex-col items-center leading-[0.95]">
+            <span className="font-serif text-6xl font-light tracking-tight text-shadow-lux sm:text-8xl">
+              {event.bride}
+            </span>
+            <span className="my-1 font-script text-5xl text-gold-light text-shadow-lux sm:my-2 sm:text-7xl">
+              &amp;
+            </span>
+            <span className="font-serif text-6xl font-light tracking-tight text-shadow-lux sm:text-8xl">
+              {event.groom}
+            </span>
+          </div>
+        </Reveal>
 
-        <motion.div variants={item}>
+        <Reveal delay={0.5}>
           <Ornament className="my-8" color="var(--color-gold-light)" />
-        </motion.div>
+        </Reveal>
 
-        <motion.p
-          variants={item}
-          className="text-sm uppercase tracking-[0.28em] text-champagne/90 sm:text-base"
-        >
-          {dateLong}
-        </motion.p>
-        <motion.p
-          variants={item}
-          className="mt-2 text-xs uppercase tracking-[0.34em] text-champagne/65"
-        >
-          {event.city}
-        </motion.p>
+        <Reveal delay={0.6}>
+          <p className="text-sm uppercase tracking-[0.28em] text-champagne/90 sm:text-base">
+            {dateLong}
+          </p>
+        </Reveal>
+        <Reveal delay={0.68}>
+          <p className="mt-2 text-xs uppercase tracking-[0.34em] text-champagne/65">
+            {event.city}
+          </p>
+        </Reveal>
 
-        <motion.div
-          variants={item}
-          className="mt-10 flex flex-col items-center gap-4 sm:flex-row"
-        >
-          <a href="#seat" className="btn-gold">
-            Find Your Seat
-          </a>
-          <a href="/program" className="btn-outline btn-ghost-light">
-            Order of Service
-          </a>
-        </motion.div>
-      </motion.div>
+        <Reveal delay={0.82} className="mt-10">
+          <div className="flex flex-col items-center gap-4 sm:flex-row">
+            <a href="#seat" className="btn-gold">
+              Find Your Seat
+            </a>
+            <a href="/program" className="btn-outline btn-ghost-light">
+              Order of Service
+            </a>
+          </div>
+        </Reveal>
+      </div>
 
       {/* Scroll cue */}
       <a

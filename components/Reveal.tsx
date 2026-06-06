@@ -1,32 +1,32 @@
-"use client";
+import clsx from "clsx";
+import type { CSSProperties, ReactNode } from "react";
 
-import { motion } from "framer-motion";
-import type { ReactNode } from "react";
-
-const EASE = [0.2, 0.8, 0.2, 1] as const;
-
+/**
+ * Fade-and-rise entrance, driven by a pure CSS animation that runs on mount.
+ * No JS / IntersectionObserver, so content is always guaranteed to appear.
+ */
 export function Reveal({
   children,
   delay = 0,
   y = 28,
   className,
-  once = true,
 }: {
   children: ReactNode;
   delay?: number;
   y?: number;
   className?: string;
-  once?: boolean;
 }) {
   return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, margin: "-70px" }}
-      transition={{ duration: 0.9, delay, ease: EASE }}
+    <div
+      className={clsx("reveal-rise", className)}
+      style={
+        {
+          "--reveal-delay": `${delay}s`,
+          "--reveal-y": `${y}px`,
+        } as CSSProperties
+      }
     >
       {children}
-    </motion.div>
+    </div>
   );
 }

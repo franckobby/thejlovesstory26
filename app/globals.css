@@ -257,6 +257,23 @@
 .animate-kenburns { animation: kenburns 22s ease-out forwards alternate; }
 .animate-floaty { animation: floaty 4s ease-in-out infinite; }
 
+/* Entrance reveal — progressive enhancement.
+   Content is visible by DEFAULT. The hidden→rise animation is only enabled once
+   <html> gets `.anim-ready`, which JS adds via requestAnimationFrame — i.e. only
+   when the page is actually visible and able to paint. This guarantees content is
+   never stuck invisible (no-JS, hidden tab, reduced motion all show it). */
+@keyframes reveal-rise {
+  from { opacity: 0; transform: translateY(var(--reveal-y, 28px)); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-ready .reveal-rise {
+  opacity: 0;
+  animation: reveal-rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) var(--reveal-delay, 0s) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .anim-ready .reveal-rise { opacity: 1; animation: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;

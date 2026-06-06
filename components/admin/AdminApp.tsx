@@ -364,7 +364,7 @@ export function AdminApp({
             data={data}
             onChange={(field, value) =>
               mutate((d) => {
-                (d.event as Record<string, string>)[field] = value;
+                (d.event as unknown as Record<string, string>)[field] = value;
               })
             }
           />

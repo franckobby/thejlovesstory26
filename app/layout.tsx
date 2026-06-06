@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Jost, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 
+// Enables entrance animations before first paint, but only when the page is
+// actually visible — so content is never stuck hidden on a backgrounded tab,
+// with JS disabled, or in a headless render.
+const ANIM_READY_SCRIPT = `try{if(document.visibilityState!=='hidden')document.documentElement.classList.add('anim-ready')}catch(e){}`;
+
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
@@ -57,7 +62,10 @@ export default function RootLayout({
       lang="en"
       className={`${cormorant.variable} ${jost.variable} ${pinyon.variable} antialiased`}
     >
-      <body className="grain min-h-screen">{children}</body>
+      <body className="grain min-h-screen">
+        <script dangerouslySetInnerHTML={{ __html: ANIM_READY_SCRIPT }} />
+        {children}
+      </body>
     </html>
   );
 }

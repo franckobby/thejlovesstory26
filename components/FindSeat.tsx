@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { SeatMatch } from "@/lib/types";
 import { Ornament } from "./Ornament";
 
@@ -74,78 +74,62 @@ export function FindSeat() {
         </p>
 
         <div className="relative mt-10">
-          <AnimatePresence mode="wait">
-            {!selected ? (
-              <motion.div
-                key="search"
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.5, ease: EASE }}
-              >
-                <form onSubmit={onSubmit} className="relative">
-                  <input
-                    ref={inputRef}
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="e.g. Francis Aggrey"
-                    autoComplete="off"
-                    aria-label="Your full name"
-                    className="field text-center text-lg"
-                  />
-                  <button
-                    type="submit"
-                    disabled={matches.length === 0}
-                    className="btn-gold mt-4 w-full"
-                  >
-                    {loading ? "Searching…" : "Reveal My Table"}
-                  </button>
-                </form>
+          {!selected ? (
+            <div>
+              <form onSubmit={onSubmit} className="relative">
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="e.g. Francis Aggrey"
+                  autoComplete="off"
+                  aria-label="Your full name"
+                  className="field text-center text-lg"
+                />
+                <button
+                  type="submit"
+                  disabled={matches.length === 0}
+                  className="btn-gold mt-4 w-full"
+                >
+                  {loading ? "Searching…" : "Reveal My Table"}
+                </button>
+              </form>
 
-                {/* Suggestions */}
-                <div className="mt-4 text-left">
-                  {touched && !loading && matches.length === 0 && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      className="card-lux px-5 py-5 text-center text-sm text-ink-soft"
-                    >
-                      We couldn&rsquo;t find that name. Try your first and last
-                      name, or check the spelling — and if you&rsquo;re still
-                      stuck, any usher will be glad to help.
-                    </motion.div>
-                  )}
+              {/* Suggestions / empty state */}
+              <div className="mt-4 text-left">
+                {touched && !loading && matches.length === 0 && (
+                  <div className="card-lux px-5 py-5 text-center text-sm text-ink-soft">
+                    We couldn&rsquo;t find that name. Try your first and last
+                    name, or check the spelling — and if you&rsquo;re still
+                    stuck, any usher will be glad to help.
+                  </div>
+                )}
 
-                  {matches.length > 0 && (
-                    <motion.ul
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="card-lux divide-y divide-gold/15 overflow-hidden"
-                    >
-                      {matches.map((m) => (
-                        <li key={`${m.name}-${m.tableId}`}>
-                          <button
-                            type="button"
-                            onClick={() => setSelected(m)}
-                            className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left transition-colors hover:bg-gold/10"
-                          >
-                            <span className="font-serif text-lg text-ink">
-                              {m.name}
-                            </span>
-                            <span className="text-[0.65rem] uppercase tracking-[0.18em] text-gold-deep">
-                              {m.tableLabel}
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                    </motion.ul>
-                  )}
-                </div>
-              </motion.div>
-            ) : (
-              <SeatReveal key="reveal" match={selected} onReset={reset} />
-            )}
-          </AnimatePresence>
+                {matches.length > 0 && (
+                  <ul className="card-lux divide-y divide-gold/15 overflow-hidden">
+                    {matches.map((m) => (
+                      <li key={`${m.name}-${m.tableId}`}>
+                        <button
+                          type="button"
+                          onClick={() => setSelected(m)}
+                          className="flex w-full items-center justify-between gap-3 px-5 py-3.5 text-left transition-colors hover:bg-gold/10"
+                        >
+                          <span className="font-serif text-lg text-ink">
+                            {m.name}
+                          </span>
+                          <span className="text-[0.65rem] uppercase tracking-[0.18em] text-gold-deep">
+                            {m.tableLabel}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+          ) : (
+            <SeatReveal match={selected} onReset={reset} />
+          )}
         </div>
       </div>
     </section>
@@ -165,7 +149,6 @@ function SeatReveal({
     <motion.div
       initial={{ opacity: 0, scale: 0.94, y: 16 }}
       animate={{ opacity: 1, scale: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.7, ease: EASE }}
       className="card-lux relative overflow-hidden px-7 py-10 text-center"
     >
