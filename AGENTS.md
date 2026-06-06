@@ -10,7 +10,7 @@ Premium wedding seating + program app. See `README.md` for the full guide.
 
 - **Run:** `npm run dev` (port 3000). `npm run build` to verify.
 - **Pages:** `/` (guest landing + Find Your Seat), `/program` (order of service, print-to-PDF), `/admin` (password-gated Seating Manager).
-- **Data:** plain JSON in `data/` (`seating.json`, `event.json`, `program.json`). All reads/writes go through `lib/store.ts` — swap its helpers for Vercel KV/Postgres to make admin saves persist on serverless (filesystem is read-only there). `data/seating.json` was parsed from the couple's Excel sheet (15 tables, 150 guests).
+- **Data:** plain JSON in `data/` (`seating.json`, `event.json`, `program.json`), parsed from the couple's Excel sheet (15 tables, 150 guests). All reads/writes go through `lib/store.ts`, which uses **Upstash Redis (KV)** when `KV_REST_API_URL`/`KV_REST_API_TOKEN` (or `UPSTASH_REDIS_REST_*`) are set, and falls back to the `data/*.json` files locally. On first production read it auto-seeds KV from the bundled JSON. This is how admin Save persists on Vercel's read-only filesystem.
 - **Admin auth:** `ADMIN_PASSWORD` in `.env.local` (see `lib/auth.ts`). Guest seat search is public (`/api/seat`); `/api/admin` is cookie-protected.
 - **Guest matching:** `lib/match.ts` — normalized + Levenshtein fuzzy match (typo/partial tolerant).
 

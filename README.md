@@ -71,23 +71,31 @@ with the same filenames to swap photos (`couple-hero.jpg` is the color hero;
 
 ## Deploying to Vercel
 
-Push to GitHub, then **Import Project** on vercel.com. Set the `ADMIN_PASSWORD`
-environment variable in the Vercel dashboard.
+The project deploys from GitHub — every push to `main` triggers a deploy.
 
-### ⚠️ Important: data persistence on Vercel
+### Persistence (already wired up)
 
-Locally, admin **Save** writes to the JSON files in `data/`. Vercel's serverless
-filesystem is **read-only**, so saves will fail there. The guest site (reading
-seating/program) works fine — only *editing from the deployed admin* needs a
-database.
+`lib/store.ts` automatically uses **Redis (KV)** when its env vars are present,
+and falls back to the local `data/*.json` files for development. So admin **Save**
+persists on Vercel once you add a KV store:
 
-The whole app talks to one small module — **`lib/store.ts`** — through a handful
-of functions (`getAllData`, `saveAllData`, etc.). To make admin edits persist on
-Vercel, swap those read/write helpers for **Vercel KV** (Upstash Redis) or
-**Vercel Postgres**. Nothing else in the app changes.
+1. Vercel dashboard → your project → **Storage** → **Create Database** →
+   **Upstash → Redis** (a.k.a. KV). Accept the defaults and **Connect** it to
+   this project. This injects `KV_REST_API_URL` and `KV_REST_API_TOKEN`
+   automatically. (The code also accepts `UPSTASH_REDIS_REST_URL` /
+   `UPSTASH_REDIS_REST_TOKEN`.)
+2. Add an **`ADMIN_PASSWORD`** environment variable (Settings → Environment
+   Variables).
+3. **Redeploy** (Deployments → latest → ⋯ → Redeploy) so the new env vars take
+   effect.
 
-If you'd rather not use a database: edit the JSON files locally, commit, and
-redeploy — each deploy ships the latest seating.
+On the first load after that, the KV store is **seeded automatically** from the
+data in this repo, so the live site starts with your current seating. From then
+on, admin edits are saved to KV and survive redeploys.
+
+> No database? You can instead edit the `data/*.json` files locally, commit, and
+> push — each deploy ships the latest seating (but the deployed `/admin` won't be
+> able to save).
 
 ---
 
