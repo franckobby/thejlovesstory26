@@ -15,7 +15,7 @@ Built with **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 ·
 | ----------- | ---------------- | ------------------------------------------------------------------- |
 | `/`         | Guests           | Cinematic landing, **Find Your Seat** (fuzzy name search → table reveal), countdown, gallery, details. |
 | `/program`  | Guests           | The order of service — view on screen or **Download / Print** (PDF). |
-| `/admin`    | Couple / planner | **Seating Manager** (open, no password): drag-and-drop seating, event details, program editor, and a **QR code generator**. |
+| `/admin`    | Couple / planner | **Seating Manager** (passcode-protected): drag-and-drop seating, event details, program editor, and a **QR code generator**. |
 
 ---
 
@@ -30,13 +30,14 @@ Open **http://localhost:3000**.
 
 - Guest site: http://localhost:3000
 - Program: http://localhost:3000/program
-- Admin: http://localhost:3000/admin (no login)
+- Admin: http://localhost:3000/admin (passcode)
 
 ### Admin access
 
-The admin is **open** — anyone with the `/admin` link can edit the seating. This
-is intentional for this low-risk use. To lock it later (a password or an
-unguessable secret URL), just ask. No env vars are needed for local dev.
+`/admin` is protected by a **single passcode** (default `lovejj2026`). Change it
+by setting **`ADMIN_PASSCODE`** in `.env.local` and in your Vercel environment
+variables. You enter it once and the browser remembers it; the **Lock** button
+forgets it (handy on a shared computer).
 
 ---
 

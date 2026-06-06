@@ -6,7 +6,15 @@ import { QRPanel } from "./QRPanel";
 
 type Tab = "seating" | "details" | "programme" | "share";
 
-export function AdminApp({ initial }: { initial: AppData }) {
+export function AdminApp({
+  initial,
+  passcode,
+  onLock,
+}: {
+  initial: AppData;
+  passcode: string;
+  onLock: () => void;
+}) {
   const [data, setData] = useState<AppData>(initial);
   const [dirty, setDirty] = useState(false);
   const [tab, setTab] = useState<Tab>("seating");
@@ -99,14 +107,17 @@ export function AdminApp({ initial }: { initial: AppData }) {
     try {
       const res = await fetch("/api/admin", {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-passcode": passcode,
+        },
         body: JSON.stringify(data),
       });
       if (res.ok) {
         setDirty(false);
         setSaveMsg("All changes saved");
       } else if (res.status === 401) {
-        setSaveMsg("Session expired — reload and sign in again.");
+        setSaveMsg("Wrong passcode — lock and re-enter it.");
       } else {
         const d = await res.json().catch(() => ({}));
         setSaveMsg(d.error || "Save failed.");
@@ -154,6 +165,12 @@ export function AdminApp({ initial }: { initial: AppData }) {
             >
               View site ↗
             </a>
+            <button
+              onClick={onLock}
+              className="text-[0.68rem] uppercase tracking-[0.18em] text-champagne/70 transition-colors hover:text-gold-light"
+            >
+              Lock
+            </button>
             <button
               onClick={save}
               disabled={!dirty || saving}

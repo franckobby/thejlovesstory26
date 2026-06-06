@@ -11,7 +11,7 @@ Premium wedding seating + program app. See `README.md` for the full guide.
 - **Run:** `npm run dev` (port 3000). `npm run build` to verify.
 - **Pages:** `/` (guest landing + Find Your Seat), `/program` (order of service, print-to-PDF), `/admin` (password-gated Seating Manager).
 - **Data:** plain JSON in `data/` (`seating.json`, `event.json`, `program.json`), parsed from the couple's Excel sheet (15 tables, 150 guests). All reads/writes go through `lib/store.ts`, which uses **Neon Postgres** (a single `app_state` JSONB row) when `DATABASE_URL`/`POSTGRES_URL` is set, and falls back to the `data/*.json` files locally. On first production read it auto-seeds from the bundled JSON. This is how admin Save persists on Vercel's read-only filesystem.
-- **Admin:** **no auth** — removed at the owner's request (low-risk data). `/admin` and `/api/admin` (GET reads, PUT saves) are open. To re-lock later, add a password gate or an unguessable secret URL.
+- **Admin:** single shared **passcode** (`ADMIN_PASSCODE` env; default fallback in `lib/auth.ts`). Client sends it as the `x-admin-passcode` header on `/api/admin` GET/PUT and stores it in `localStorage`; the Lock button clears it. No sessions/tokens/cookies.
 - **Guest matching:** `lib/match.ts` — normalized + Levenshtein fuzzy match (typo/partial tolerant).
 
 ## Animation gotchas (learned the hard way — don't regress these)
