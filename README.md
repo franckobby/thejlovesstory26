@@ -115,4 +115,4 @@ public/images/        Optimized couple photos
 
 ---
 
-Made with love. **#GodDidThis · The JLoveStory26**
+Made with love. **#GodDidThis · TheJLoveStory26**

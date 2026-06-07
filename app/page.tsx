@@ -38,37 +38,32 @@ export default async function Home() {
               <p className="font-serif text-2xl italic text-ink-soft sm:text-3xl">
                 {dateLong}
               </p>
-              <p className="mt-2 text-sm uppercase tracking-[0.28em] text-gold-deep">
-                {event.timeDisplay}
-              </p>
             </Reveal>
 
             <Reveal delay={0.1} className="mt-12">
               <Countdown targetISO={event.date} />
             </Reveal>
 
-            <div className="mt-16 grid gap-6 sm:grid-cols-2">
-              <Reveal delay={0.05}>
-                <div className="card-lux flex h-full flex-col px-8 py-10">
-                  <p className="eyebrow">The Ceremony</p>
-                  <h3 className="mt-3 font-serif text-2xl text-ink">
-                    {event.ceremonyVenue}
-                  </h3>
-                  <p className="mt-2 text-ink-soft">{event.ceremonyAddress}</p>
-                  <p className="mt-auto pt-5 text-sm uppercase tracking-[0.2em] text-gold-deep">
-                    {event.timeDisplay}
-                  </p>
-                </div>
-              </Reveal>
-              <Reveal delay={0.14}>
-                <div className="card-lux flex h-full flex-col px-8 py-10">
-                  <p className="eyebrow">The Reception</p>
-                  <h3 className="mt-3 font-serif text-2xl text-ink">
-                    {event.receptionVenue}
-                  </h3>
-                  <p className="mt-2 text-ink-soft">{event.receptionAddress}</p>
-                  <div className="mt-auto pt-5">
-                    <p className="text-sm uppercase tracking-[0.2em] text-gold-deep">
+            <Reveal delay={0.06} className="mt-14">
+              <div className="card-lux mx-auto max-w-xl px-8 py-12 text-center">
+                <p className="eyebrow">The Venue</p>
+                <h3 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
+                  {event.receptionVenue}
+                </h3>
+                <p className="mt-2 text-ink-soft">{event.receptionAddress}</p>
+
+                <div className="mx-auto my-8 h-px w-12 bg-gold/40" />
+
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <p className="eyebrow">The Ceremony</p>
+                    <p className="mt-2 text-sm uppercase tracking-[0.2em] text-gold-deep">
+                      {event.timeDisplay}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="eyebrow">The Reception</p>
+                    <p className="mt-2 text-sm uppercase tracking-[0.2em] text-gold-deep">
                       {event.receptionTime}
                     </p>
                     <p className="mt-1.5 text-xs uppercase tracking-[0.22em] text-ink-soft">
@@ -76,8 +71,8 @@ export default async function Home() {
                     </p>
                   </div>
                 </div>
-              </Reveal>
-            </div>
+              </div>
+            </Reveal>
           </div>
         </section>
 
