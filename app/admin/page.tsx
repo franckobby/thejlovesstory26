@@ -14,6 +14,7 @@ export default function AdminPage() {
   const [entry, setEntry] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [show, setShow] = useState(true);
 
   /** Try to load the data with a given passcode. Returns true on success. */
   const tryLoad = useCallback(async (code: string): Promise<boolean> => {
@@ -82,13 +83,21 @@ export default function AdminPage() {
           </h1>
           <form onSubmit={submit} className="mt-8">
             <input
-              type="password"
+              type={show ? "text" : "password"}
               value={entry}
               onChange={(e) => setEntry(e.target.value)}
               placeholder="Passcode"
               autoFocus
-              className="field text-center"
+              autoComplete="off"
+              className="field text-center text-2xl tracking-[0.12em]"
             />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              className="mt-3 text-[0.65rem] uppercase tracking-[0.2em] text-champagne/60 transition-colors hover:text-gold-light"
+            >
+              {show ? "Hide passcode" : "Show passcode"}
+            </button>
             {error && <p className="mt-3 text-sm text-gold-light/90">{error}</p>}
             <button
               type="submit"
