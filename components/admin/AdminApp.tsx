@@ -94,7 +94,12 @@ export function AdminApp({
       alert("Please move or remove this table's guests first.");
       return;
     }
-    if (!confirm("Remove this table?")) return;
+    const entered = prompt("Enter the admin passcode to delete this table:");
+    if (entered === null) return; // cancelled
+    if (entered.trim() !== passcode) {
+      alert("Incorrect passcode — table not deleted.");
+      return;
+    }
     mutate((d) => {
       d.tables = d.tables.filter((x) => x.id !== tableId);
     });
