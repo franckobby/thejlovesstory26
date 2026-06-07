@@ -21,6 +21,7 @@ export interface EventDetails {
   ceremonyAddress: string;
   receptionVenue: string;
   receptionAddress: string;
+  receptionTime: string;
   city: string;
   dressCode: string;
   welcome: string;

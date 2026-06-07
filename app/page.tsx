@@ -67,9 +67,14 @@ export default async function Home() {
                     {event.receptionVenue}
                   </h3>
                   <p className="mt-2 text-ink-soft">{event.receptionAddress}</p>
-                  <p className="mt-auto pt-5 text-sm uppercase tracking-[0.2em] text-gold-deep">
-                    Dinner &amp; Dancing to Follow
-                  </p>
+                  <div className="mt-auto pt-5">
+                    <p className="text-sm uppercase tracking-[0.2em] text-gold-deep">
+                      {event.receptionTime}
+                    </p>
+                    <p className="mt-1.5 text-xs uppercase tracking-[0.22em] text-ink-soft">
+                      Dinner &amp; Dancing to Follow
+                    </p>
+                  </div>
                 </div>
               </Reveal>
             </div>
