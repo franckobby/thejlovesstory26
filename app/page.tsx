@@ -73,12 +73,6 @@ export default async function Home() {
                 </div>
               </Reveal>
             </div>
-
-            <Reveal delay={0.1}>
-              <p className="mt-10 text-sm uppercase tracking-[0.26em] text-ink-soft">
-                Dress Code · {event.dressCode}
-              </p>
-            </Reveal>
           </div>
         </section>
 
