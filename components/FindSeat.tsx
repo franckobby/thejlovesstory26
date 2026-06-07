@@ -170,28 +170,30 @@ function SeatReveal({
         You are seated at
       </motion.p>
 
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18, duration: 0.7 }}
-        className="my-2 flex items-baseline justify-center gap-3"
-      >
-        <span className="font-serif text-xl text-ink-soft">Table</span>
-        <span className="shimmer-text font-serif text-7xl font-medium sm:text-8xl">
-          {tableNumber}
-        </span>
-      </motion.div>
-
-      {match.category && (
-        <motion.span
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="inline-block rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-[0.65rem] uppercase tracking-[0.22em] text-gold-deep"
+      <div className="my-3 flex flex-col items-center gap-4">
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.18, duration: 0.7 }}
+          className="flex items-baseline justify-center gap-3"
         >
-          {match.category}
-        </motion.span>
-      )}
+          <span className="font-serif text-xl text-ink-soft">Table</span>
+          <span className="shimmer-text font-serif text-7xl font-medium leading-none sm:text-8xl">
+            {tableNumber}
+          </span>
+        </motion.div>
+
+        {match.category && (
+          <motion.span
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="inline-block max-w-full rounded-full border border-gold/40 bg-gold/10 px-4 py-1 text-center text-[0.65rem] uppercase tracking-[0.22em] text-gold-deep"
+          >
+            {match.category}
+          </motion.span>
+        )}
+      </div>
 
       <motion.p
         initial={{ opacity: 0 }}
