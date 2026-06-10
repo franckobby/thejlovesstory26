@@ -25,7 +25,7 @@ export default async function Home() {
 
   return (
     <>
-      <SiteHeader monogram={event.monogram} variant="overlay" />
+      <SiteHeader monogram={event.monogram} variant="overlay" showSeatLink={false} />
       <main>
         <ScanArrival event={event} program={program} />
 
