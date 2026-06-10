@@ -305,37 +305,13 @@ function SeatReveal({
         Welcome, {match.name.split(" ")[0]}.
       </motion.p>
 
-      {match.tablemates.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.46 }}
-          className="mt-7"
-        >
-          <Ornament className="mb-5" />
-          <p className="text-[0.65rem] uppercase tracking-[0.28em] text-gold-deep">
-            You&rsquo;ll be joined by
-          </p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {match.tablemates.map((g) => (
-              <span
-                key={g}
-                className="rounded-full bg-olive/8 px-3.5 py-1.5 text-sm text-ink-soft"
-              >
-                {g}
-              </span>
-            ))}
-          </div>
-        </motion.div>
-      )}
-
-      {/* Personalized program — the headline action after the reveal.
-          View it in a new tab, or download the keepsake PDF. */}
+      {/* The schedule is the headline action — keep it right under the seat,
+          above the tablemates. View it, or download the keepsake PDF. */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.56 }}
-        className="mt-9"
+        transition={{ delay: 0.46 }}
+        className="mt-7"
       >
         <p className="eyebrow">Your Schedule</p>
         <div className="mt-3 flex gap-3">
@@ -356,6 +332,30 @@ function SeatReveal({
           View the full schedule, or download your personalized keepsake.
         </p>
       </motion.div>
+
+      {match.tablemates.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.56 }}
+          className="mt-8"
+        >
+          <Ornament className="mb-5" />
+          <p className="text-[0.65rem] uppercase tracking-[0.28em] text-gold-deep">
+            You&rsquo;ll be joined by
+          </p>
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
+            {match.tablemates.map((g) => (
+              <span
+                key={g}
+                className="rounded-full bg-olive/8 px-3.5 py-1.5 text-sm text-ink-soft"
+              >
+                {g}
+              </span>
+            ))}
+          </div>
+        </motion.div>
+      )}
 
       <button
         onClick={onReset}
