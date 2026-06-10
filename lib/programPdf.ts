@@ -285,6 +285,11 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
   return doc;
 }
 
+async function makeDoc(opts: ProgramPdfOptions): Promise<Doc> {
+  const { jsPDF } = await import("jspdf");
+  return buildProgramDoc(jsPDF, opts);
+}
+
 /**
  * Build the order-of-service as a premium A4 PDF and trigger an immediate
  * download — no print dialog. When a guest name + table are supplied they are
@@ -292,7 +297,22 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
  * keepsake.
  */
 export async function generateProgramPdf(opts: ProgramPdfOptions): Promise<void> {
-  const { jsPDF } = await import("jspdf");
-  const doc = buildProgramDoc(jsPDF, opts);
+  const doc = await makeDoc(opts);
   doc.save(fileName(opts.guestName, opts.tableLabel));
+}
+
+/**
+ * Build the same PDF but open it in a new tab for viewing (no download). The
+ * blob URL is revoked after a short delay once the viewer has loaded it.
+ */
+export async function viewProgramPdf(opts: ProgramPdfOptions): Promise<void> {
+  const doc = await makeDoc(opts);
+  const url = doc.output("bloburl") as string;
+  const win = window.open(url, "_blank");
+  // Popup blocked (e.g. not treated as a user gesture) — fall back to download.
+  if (!win) {
+    doc.save(fileName(opts.guestName, opts.tableLabel));
+    return;
+  }
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

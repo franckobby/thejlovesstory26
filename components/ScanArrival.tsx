@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { EventDetails, ProgramData, SeatMatch } from "@/lib/types";
-import { generateProgramPdf } from "@/lib/programPdf";
+import { generateProgramPdf, viewProgramPdf } from "@/lib/programPdf";
 import { Ornament } from "./Ornament";
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
@@ -92,30 +92,33 @@ export function ScanArrival({
   return (
     <section
       id="seat"
-      className="relative flex min-h-[100svh] scroll-mt-0 items-center justify-center overflow-hidden px-6 py-24"
+      className="relative flex min-h-[100svh] scroll-mt-0 flex-col overflow-hidden bg-forest md:block"
     >
-      {/* Photograph backdrop */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 animate-kenburns">
+      {/* Photograph — a framed band on phones (so both the standing groom and
+          the seated bride stay in view above the card), a full-bleed backdrop
+          on larger screens. */}
+      <div className="relative h-[46svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
+        <div className="absolute inset-0 md:animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
             alt={event.coupleNames}
             fill
             priority
             sizes="100vw"
-            className="object-cover"
-            style={{ objectPosition: "50% 32%" }}
+            className="object-cover [object-position:50%_30%] md:[object-position:50%_26%]"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-forest/70 via-forest/45 to-forest/90" />
-        <div className="absolute inset-0 bg-forest/20" />
+        {/* Fade the photo into the forest section below on mobile. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-forest/30 via-forest/10 to-forest md:from-forest/70 md:via-forest/45 md:to-forest/90" />
+        <div className="absolute inset-0 bg-forest/10 md:bg-forest/20" />
       </div>
 
-      {/* Decorative gold frame */}
-      <div className="pointer-events-none absolute inset-3 z-10 border border-gold/30 sm:inset-5" />
-      <div className="pointer-events-none absolute inset-4 z-10 border border-gold/10 sm:inset-6" />
+      {/* Decorative gold frame — desktop only */}
+      <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
+      <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
 
-      <div className="relative z-20 w-full max-w-xl">
+      <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-16 pt-8 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
+       <div className="w-full max-w-xl">
         {/* Couple masthead */}
         <div className="reveal-rise text-center text-champagne">
           <p
@@ -237,6 +240,7 @@ export function ScanArrival({
             Details
           </a>
         </div>
+       </div>
       </div>
     </section>
   );
@@ -253,25 +257,28 @@ function SeatReveal({
   program: ProgramData;
   onReset: () => void;
 }) {
-  const [downloading, setDownloading] = useState(false);
+  const [busy, setBusy] = useState<"view" | "download" | null>(null);
   const tableNumber =
     match.tableLabel.replace(/[^0-9]/g, "") || match.tableLabel;
 
-  // Generate a personalized program PDF (with the guest's name + seat) and
-  // download it straight away — no print dialog.
-  async function downloadProgram() {
-    if (downloading) return;
-    setDownloading(true);
+  const pdfOpts = {
+    event,
+    program,
+    guestName: match.name,
+    tableLabel: match.tableLabel,
+    groupLabel: match.category ?? undefined,
+  };
+
+  // Build the guest's personalized program (name + seat) and either open it in
+  // a new tab to view, or download it straight away — no print dialog.
+  async function handleProgram(action: "view" | "download") {
+    if (busy) return;
+    setBusy(action);
     try {
-      await generateProgramPdf({
-        event,
-        program,
-        guestName: match.name,
-        tableLabel: match.tableLabel,
-        groupLabel: match.category ?? undefined,
-      });
+      if (action === "view") await viewProgramPdf(pdfOpts);
+      else await generateProgramPdf(pdfOpts);
     } finally {
-      setDownloading(false);
+      setBusy(null);
     }
   }
 
@@ -358,21 +365,33 @@ function SeatReveal({
         </motion.div>
       )}
 
-      {/* Personalized program download — the headline action after the reveal */}
+      {/* Personalized program — the headline action after the reveal.
+          View it in a new tab, or download the keepsake PDF. */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.56 }}
         className="mt-9"
       >
-        <button
-          onClick={downloadProgram}
-          disabled={downloading}
-          className="btn-gold w-full"
-        >
-          <DownloadIcon />
-          {downloading ? "Preparing…" : "Download Your Program"}
-        </button>
+        <p className="eyebrow">Your Program</p>
+        <div className="mt-3 flex gap-3">
+          <button
+            onClick={() => handleProgram("view")}
+            disabled={busy !== null}
+            className="btn-outline flex-1 px-0"
+          >
+            <ViewIcon />
+            {busy === "view" ? "Opening…" : "View"}
+          </button>
+          <button
+            onClick={() => handleProgram("download")}
+            disabled={busy !== null}
+            className="btn-gold flex-1 px-0"
+          >
+            <DownloadIcon />
+            {busy === "download" ? "Preparing…" : "Download"}
+          </button>
+        </div>
         <p className="mt-3 text-xs text-ink-soft/80">
           Your name &amp; table are printed on it — a keepsake for the day.
         </p>
@@ -404,6 +423,25 @@ function DownloadIcon() {
       <path d="M12 3v12" />
       <path d="m7 11 5 5 5-5" />
       <path d="M5 21h14" />
+    </svg>
+  );
+}
+
+function ViewIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
     </svg>
   );
 }
