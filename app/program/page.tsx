@@ -69,7 +69,7 @@ export default async function ProgramPage({
               download lives up here so it never pushes the program down. */}
           <header className="flex items-start justify-between gap-4 border-b border-gold/20 pb-5">
             <div>
-              <p className="eyebrow">Order of Service</p>
+              <p className="eyebrow">Schedule</p>
               <h1 className="mt-2 font-serif text-3xl font-light text-ink sm:text-4xl">
                 {event.coupleNames}
               </h1>

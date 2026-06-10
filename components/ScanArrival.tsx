@@ -136,7 +136,7 @@ export function ScanArrival({
               <div className="text-center">
                 <h2 className="text-4xl sm:text-5xl">Find Your Seat</h2>
                 <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-ink-soft">
-                  Enter your name to find your table and download your program.
+                  Enter your name to find your table and download your schedule.
                 </p>
               </div>
 
@@ -337,7 +337,7 @@ function SeatReveal({
         transition={{ delay: 0.56 }}
         className="mt-9"
       >
-        <p className="eyebrow">Your Program</p>
+        <p className="eyebrow">Your Schedule</p>
         <div className="mt-3 flex gap-3">
           <Link href={programHref} className="btn-outline flex-1 px-0">
             <ViewIcon />
@@ -353,7 +353,7 @@ function SeatReveal({
           </button>
         </div>
         <p className="mt-3 text-xs text-ink-soft/80">
-          View the full order of service, or download your personalized keepsake.
+          View the full schedule, or download your personalized keepsake.
         </p>
       </motion.div>
 
