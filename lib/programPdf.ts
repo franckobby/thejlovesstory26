@@ -5,8 +5,16 @@ type RGB = [number, number, number];
 const GOLD: RGB = [184, 145, 80];
 const GOLD_DEEP: RGB = [154, 118, 55];
 const INK: RGB = [32, 35, 26];
-const INK_SOFT: RGB = [69, 72, 60];
-const CREAM: RGB = [245, 240, 228];
+const INK_SOFT: RGB = [88, 92, 78];
+const CREAM: RGB = [247, 242, 231];
+
+export interface ProgramPdfOptions {
+  event: EventDetails;
+  program: ProgramData;
+  guestName?: string;
+  tableLabel?: string;
+  groupLabel?: string;
+}
 
 /** Turn a guest name into a safe, pretty file name. */
 function fileName(guestName?: string, tableLabel?: string): string {
@@ -16,207 +24,234 @@ function fileName(guestName?: string, tableLabel?: string): string {
   return `${base.replace(/[^\p{L}\p{N} &-]/gu, "").trim()}.pdf`;
 }
 
-/**
- * Build the order-of-service as a premium A4 PDF and trigger an immediate
- * download — no print dialog. When a guest name + table are supplied they are
- * printed on a personalized place card at the top, making the file their own
- * keepsake.
- */
-export async function generateProgramPdf(opts: {
-  event: EventDetails;
-  program: ProgramData;
-  guestName?: string;
-  tableLabel?: string;
-  groupLabel?: string;
-}): Promise<void> {
-  const { event, program, guestName, tableLabel, groupLabel } = opts;
-  const { jsPDF } = await import("jspdf");
+// jsPDF's instance type isn't worth importing here; the drawing helpers only
+// touch a small, stable slice of its API.
+/* eslint-disable @typescript-eslint/no-explicit-any */
+type Doc = any;
 
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
+/**
+ * Lay the order-of-service out as a premium A4 document: a centered masthead,
+ * an optional personalized place card (guest name + seat), two timeline
+ * sections with a gold rail, and a closing. Returns the jsPDF doc.
+ */
+export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
+  const { event, program, guestName, tableLabel, groupLabel } = opts;
+  const doc: Doc = new jsPDFCtor({ unit: "mm", format: "a4" });
+
   const pageW = doc.internal.pageSize.getWidth();
   const pageH = doc.internal.pageSize.getHeight();
-  const marginX = 20;
+  const marginX = 24;
   const contentW = pageW - marginX * 2;
   const centerX = pageW / 2;
-  const bottomLimit = pageH - 18;
-  let y = 24;
+  const bottom = pageH - 26;
+  let y = 0;
 
+  const tc = (c: RGB) => doc.setTextColor(c[0], c[1], c[2]);
+  const dc = (c: RGB) => doc.setDrawColor(c[0], c[1], c[2]);
+  const fc = (c: RGB) => doc.setFillColor(c[0], c[1], c[2]);
+
+  const frame = () => {
+    dc(GOLD);
+    doc.setLineWidth(0.6);
+    doc.rect(10, 10, pageW - 20, pageH - 20);
+    doc.setLineWidth(0.2);
+    doc.rect(12, 12, pageW - 24, pageH - 24);
+  };
+  const ensure = (space: number) => {
+    if (y + space > bottom) {
+      doc.addPage();
+      frame();
+      y = 28;
+    }
+  };
+  const ornament = (cy: number) => {
+    dc(GOLD);
+    doc.setLineWidth(0.3);
+    doc.line(centerX - 26, cy, centerX - 5, cy);
+    doc.line(centerX + 5, cy, centerX + 26, cy);
+    fc(GOLD);
+    doc.triangle(centerX, cy - 1.6, centerX - 1.6, cy, centerX, cy + 1.6, "F");
+    doc.triangle(centerX, cy - 1.6, centerX + 1.6, cy, centerX, cy + 1.6, "F");
+  };
+  // Pick the largest font size (<= start) at which `text` fits `maxW`.
+  const fitSize = (text: string, maxW: number, start: number, min = 10) => {
+    let size = start;
+    while (size > min) {
+      doc.setFontSize(size);
+      if (doc.getTextWidth(text) <= maxW) break;
+      size -= 0.5;
+    }
+    return size;
+  };
+
+  frame();
+
+  // ---- Masthead ----
+  y = 30;
+  doc.setFont("times", "normal");
+  doc.setFontSize(12);
+  tc(GOLD_DEEP);
+  doc.text(event.monogram.toUpperCase(), centerX, y, {
+    align: "center",
+    charSpace: 3,
+  });
+
+  y = 41;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
+  tc(GOLD_DEEP);
+  doc.text("THE WEDDING CELEBRATION OF", centerX, y, {
+    align: "center",
+    charSpace: 1.6,
+  });
+
+  y = 57;
+  doc.setFont("times", "normal");
+  tc(INK);
+  doc.setFontSize(fitSize(event.coupleNames, contentW, 31, 18));
+  doc.text(event.coupleNames, centerX, y, { align: "center" });
+
+  y = 66;
+  ornament(y);
+
+  y = 74;
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   });
-
-  const setColor = (c: RGB) => doc.setTextColor(c[0], c[1], c[2]);
-  const ensure = (space: number) => {
-    if (y + space > bottomLimit) {
-      doc.addPage();
-      y = 24;
-    }
-  };
-
-  // Centered uppercase "eyebrow" label with letter spacing.
-  const eyebrow = (text: string, color: RGB = GOLD_DEEP) => {
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    setColor(color);
-    doc.text(text.toUpperCase(), centerX, y, {
-      align: "center",
-      charSpace: 1.1,
-    });
-  };
-
-  // A gold rule with a small centered diamond.
-  const ornament = (cy: number) => {
-    doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
-    doc.setLineWidth(0.3);
-    doc.line(centerX - 24, cy, centerX - 4, cy);
-    doc.line(centerX + 4, cy, centerX + 24, cy);
-    doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-    doc.rect(centerX - 1.1, cy - 1.1, 2.2, 2.2, "F"); // small diamond-ish accent
-  };
-
-  // ---- Masthead ----
-  doc.setFont("times", "italic");
-  doc.setFontSize(13);
-  setColor(GOLD_DEEP);
-  doc.text(event.monogram, centerX, y, { align: "center" });
-  y += 9;
-
-  eyebrow("The Wedding Celebration of");
-  y += 9;
-
-  doc.setFont("times", "normal");
-  doc.setFontSize(30);
-  setColor(INK);
-  doc.text(event.coupleNames, centerX, y, { align: "center" });
-  y += 6;
-
-  ornament(y);
-  y += 7;
-
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9);
-  setColor(INK_SOFT);
+  tc(INK_SOFT);
   doc.text(dateLong.toUpperCase(), centerX, y, {
     align: "center",
-    charSpace: 0.8,
+    charSpace: 1,
   });
-  y += 5;
-  doc.text(`${event.ceremonyVenue} · ${event.city}`.toUpperCase(), centerX, y, {
+
+  y = 80;
+  doc.setFontSize(8.5);
+  doc.text(`${event.ceremonyVenue}  ·  ${event.city}`.toUpperCase(), centerX, y, {
     align: "center",
-    charSpace: 0.8,
+    charSpace: 1,
   });
-  y += 12;
+  y = 92;
 
   // ---- Personalized place card ----
   if (guestName) {
-    const cardH = 26;
-    ensure(cardH + 6);
-    doc.setFillColor(CREAM[0], CREAM[1], CREAM[2]);
-    doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(marginX, y, contentW, cardH, 2, 2, "FD");
+    const h = 30;
+    ensure(h + 12);
+    fc(CREAM);
+    dc(GOLD);
+    doc.setLineWidth(0.5);
+    doc.roundedRect(marginX, y, contentW, h, 1.5, 1.5, "FD");
+    dc(GOLD);
+    doc.setLineWidth(0.2);
+    doc.line(centerX, y + 6, centerX, y + h - 6);
 
-    const padX = 8;
-    const midY = y + cardH / 2;
-
+    const pad = 12;
     // Left — name
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
-    setColor(GOLD_DEEP);
-    doc.text("PREPARED FOR", marginX + padX, midY - 4, { charSpace: 1 });
+    tc(GOLD_DEEP);
+    doc.text("PREPARED FOR", marginX + pad, y + 12, { charSpace: 1.4 });
     doc.setFont("times", "italic");
-    doc.setFontSize(19);
-    setColor(INK);
-    doc.text(guestName, marginX + padX, midY + 5);
+    tc(INK);
+    doc.setFontSize(fitSize(guestName, centerX - (marginX + pad) - 5, 19, 12));
+    doc.text(guestName, marginX + pad, y + 22);
 
     // Right — seat
-    const rightX = marginX + contentW - padX;
+    const rx = marginX + contentW - pad;
+    const rightMaxW = rx - centerX - 5;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
-    setColor(GOLD_DEEP);
-    doc.text("YOUR SEAT", rightX, midY - 4, { align: "right", charSpace: 1 });
+    tc(GOLD_DEEP);
+    doc.text("YOUR SEAT", rx, y + 12, { align: "right", charSpace: 1.4 });
     doc.setFont("times", "normal");
-    doc.setFontSize(17);
-    setColor(INK);
-    doc.text(tableLabel || "—", rightX, midY + 4, { align: "right" });
+    tc(INK);
+    doc.setFontSize(fitSize(tableLabel || "—", rightMaxW, 19, 12));
+    doc.text(tableLabel || "—", rx, y + 22, { align: "right" });
     if (groupLabel) {
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(7);
-      setColor(INK_SOFT);
-      doc.text(groupLabel.toUpperCase(), rightX, midY + 9, {
+      tc(INK_SOFT);
+      doc.setFontSize(fitSize(groupLabel.toUpperCase(), rightMaxW, 6.8, 5));
+      doc.text(groupLabel.toUpperCase(), rx, y + 27, {
         align: "right",
         charSpace: 0.6,
       });
     }
-
-    y += cardH + 14;
+    y += h + 13;
   }
 
-  // ---- A timeline section ("The Ceremony" / "The Reception") ----
+  // ---- Timeline section ----
   const section = (title: string, items: ProgramItem[]) => {
-    ensure(20);
+    ensure(26);
     doc.setFont("times", "normal");
-    doc.setFontSize(20);
-    setColor(INK);
+    doc.setFontSize(19);
+    tc(INK);
     doc.text(title, centerX, y, { align: "center" });
-    y += 3;
-    doc.setDrawColor(GOLD[0], GOLD[1], GOLD[2]);
+    y += 3.5;
+    dc(GOLD);
     doc.setLineWidth(0.4);
-    doc.line(centerX - 9, y, centerX + 9, y);
+    doc.line(centerX - 10, y, centerX + 10, y);
     y += 9;
 
-    const timeColW = 24;
-    const textX = marginX + timeColW + 4;
-    const textW = contentW - timeColW - 4;
+    const timeW = 22;
+    const railX = marginX + timeW + 6;
+    const textX = railX + 7;
+    const textW = contentW - (textX - marginX);
 
     for (const it of items) {
       doc.setFont("times", "normal");
-      doc.setFontSize(11);
+      doc.setFontSize(12.5);
       const titleLines = doc.splitTextToSize(it.title, textW) as string[];
       let descLines: string[] = [];
       if (it.description) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
+        doc.setFontSize(8.6);
         descLines = doc.splitTextToSize(it.description, textW) as string[];
       }
-      const blockH = titleLines.length * 5.2 + descLines.length * 4.4 + 6;
+      const blockH =
+        Math.max(titleLines.length * 5.0 + descLines.length * 3.9, 6) + 4;
       ensure(blockH);
+      const top = y;
 
-      // Time (right-aligned in its column)
+      // Time
       doc.setFont("times", "italic");
       doc.setFontSize(10.5);
-      setColor(GOLD_DEEP);
-      doc.text(it.time, marginX + timeColW, y + 0.5, { align: "right" });
+      tc(GOLD_DEEP);
+      doc.text(it.time, marginX + timeW, y + 0.5, { align: "right" });
 
-      // Accent dot + connector
-      doc.setFillColor(GOLD[0], GOLD[1], GOLD[2]);
-      doc.circle(marginX + timeColW + 4, y - 0.8, 0.9, "F");
+      // Rail + dot
+      dc(GOLD);
+      doc.setLineWidth(0.25);
+      doc.line(railX, top - 2.5, railX, top + blockH - 3);
+      fc(GOLD);
+      doc.circle(railX, top - 0.6, 1.1, "F");
+      fc(CREAM);
+      doc.circle(railX, top - 0.6, 0.45, "F");
 
       // Title
       doc.setFont("times", "normal");
-      doc.setFontSize(12);
-      setColor(INK);
+      doc.setFontSize(12.5);
+      tc(INK);
       let ty = y;
       for (const line of titleLines) {
         doc.text(line, textX, ty);
-        ty += 5.2;
+        ty += 5.0;
       }
-
       // Description
       if (descLines.length) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
-        setColor(INK_SOFT);
+        doc.setFontSize(8.6);
+        tc(INK_SOFT);
+        ty += 0.4;
         for (const line of descLines) {
           doc.text(line, textX, ty);
-          ty += 4.4;
+          ty += 3.9;
         }
       }
-
-      y = ty + 4;
+      y = top + blockH;
     }
     y += 6;
   };
@@ -225,25 +260,39 @@ export async function generateProgramPdf(opts: {
   section("The Reception", program.reception);
 
   // ---- Closing ----
-  ensure(28);
+  ensure(34);
   ornament(y);
-  y += 9;
+  y += 10;
   doc.setFont("times", "italic");
-  doc.setFontSize(12);
-  setColor(INK);
-  const thanks = doc.splitTextToSize(event.thankYou, contentW - 20) as string[];
-  for (const line of thanks) {
+  doc.setFontSize(12.5);
+  tc(INK);
+  for (const line of doc.splitTextToSize(
+    event.thankYou,
+    contentW - 24
+  ) as string[]) {
     doc.text(line, centerX, y, { align: "center" });
-    y += 6;
+    y += 6.2;
   }
-  y += 2;
+  y += 3;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  setColor(GOLD_DEEP);
+  tc(GOLD_DEEP);
   doc.text(event.hashtag.toUpperCase(), centerX, y, {
     align: "center",
-    charSpace: 0.8,
+    charSpace: 1,
   });
 
-  doc.save(fileName(guestName, tableLabel));
+  return doc;
+}
+
+/**
+ * Build the order-of-service as a premium A4 PDF and trigger an immediate
+ * download — no print dialog. When a guest name + table are supplied they are
+ * printed on a personalized place card at the top, making the file their own
+ * keepsake.
+ */
+export async function generateProgramPdf(opts: ProgramPdfOptions): Promise<void> {
+  const { jsPDF } = await import("jspdf");
+  const doc = buildProgramDoc(jsPDF, opts);
+  doc.save(fileName(opts.guestName, opts.tableLabel));
 }
