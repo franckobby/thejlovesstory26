@@ -96,7 +96,7 @@ export function ScanArrival({
       {/* Photograph — a framed band on phones (so both the standing groom and
           the seated bride stay in view above the card), a full-bleed backdrop
           on larger screens. */}
-      <div className="relative h-[32svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
+      <div className="relative h-[34svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
         <div className="absolute inset-0 md:animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
@@ -116,7 +116,7 @@ export function ScanArrival({
       <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
       <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
 
-      <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-8 pt-5 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
+      <div className="relative z-20 flex w-full flex-1 items-center justify-center px-6 pb-8 pt-5 md:absolute md:inset-0 md:px-0 md:pb-0 md:pt-0">
        <div className="w-full max-w-xl">
         {/* Couple masthead — names + date, nothing more */}
         <div className="reveal-rise text-center text-champagne">
