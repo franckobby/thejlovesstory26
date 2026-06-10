@@ -19,8 +19,8 @@ export interface ProgramPdfOptions {
 /** Turn a guest name into a safe, pretty file name. */
 function fileName(guestName?: string, tableLabel?: string): string {
   const base = guestName
-    ? `Program - ${guestName}${tableLabel ? ` - ${tableLabel}` : ""}`
-    : "Josephine & Jeffrey - Program";
+    ? `Schedule - ${guestName}${tableLabel ? ` - ${tableLabel}` : ""}`
+    : "Josephine & Jeffrey - Schedule";
   return `${base.replace(/[^\p{L}\p{N} &-]/gu, "").trim()}.pdf`;
 }
 
