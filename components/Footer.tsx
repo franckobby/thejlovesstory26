@@ -24,6 +24,10 @@ export function Footer({ event }: { event: EventDetails }) {
           <Link href="/program" className="transition-colors hover:text-gold-light">
             Schedule
           </Link>
+          <span className="text-sage/50">·</span>
+          <Link href="/classic" className="transition-colors hover:text-gold-light">
+            Classic Site
+          </Link>
         </div>
         <p className="mt-12 text-[0.65rem] uppercase tracking-[0.25em] text-champagne/35">
           With love · {new Date(event.date).getFullYear()}

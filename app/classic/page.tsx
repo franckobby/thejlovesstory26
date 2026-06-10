@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getEvent, getProgram } from "@/lib/store";
+import { getEvent } from "@/lib/store";
 import { SiteHeader } from "@/components/SiteHeader";
-import { ScanArrival } from "@/components/ScanArrival";
+import { Hero } from "@/components/Hero";
+import { FindSeat } from "@/components/FindSeat";
 import { Gallery } from "@/components/Gallery";
 import { Footer } from "@/components/Footer";
 import { Countdown } from "@/components/Countdown";
@@ -11,11 +12,11 @@ import { Ornament } from "@/components/Ornament";
 
 export const dynamic = "force-dynamic";
 
-// Scan-first guest experience: the QR code lands here and the very first thing
-// a guest sees is the prompt to enter their name. After the seat reveal they
-// can download a personalized program. The original landing lives at /classic.
-export default async function Home() {
-  const [event, program] = await Promise.all([getEvent(), getProgram()]);
+// The original guest landing — a cinematic hero followed by a separate
+// "Find Your Seat" section. Preserved here at /classic; the new scan-first
+// arrival lives at /.
+export default async function ClassicHome() {
+  const event = await getEvent();
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -27,13 +28,11 @@ export default async function Home() {
     <>
       <SiteHeader monogram={event.monogram} variant="overlay" />
       <main>
-        <ScanArrival event={event} program={program} />
+        <Hero event={event} />
+        <FindSeat />
 
         {/* When & Where */}
-        <section
-          id="celebration"
-          className="scroll-mt-20 bg-gradient-to-b from-cream to-ivory px-6 py-24 sm:py-28"
-        >
+        <section className="bg-gradient-to-b from-cream to-ivory px-6 py-24 sm:py-28">
           <div className="mx-auto max-w-4xl text-center">
             <Reveal>
               <p className="eyebrow">The Celebration</p>
