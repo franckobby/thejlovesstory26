@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { EventDetails, ProgramData, SeatMatch } from "@/lib/types";
@@ -119,15 +118,9 @@ export function ScanArrival({
 
       <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-16 pt-8 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
        <div className="w-full max-w-xl">
-        {/* Couple masthead */}
+        {/* Couple masthead — names + date, nothing more */}
         <div className="reveal-rise text-center text-champagne">
-          <p
-            className="eyebrow"
-            style={{ color: "var(--color-gold-light)" }}
-          >
-            Together with their families
-          </p>
-          <div className="mt-4 flex flex-col items-center leading-[0.95]">
+          <div className="flex flex-col items-center leading-[0.95]">
             <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-6xl">
               {event.bride}
             </span>
@@ -138,7 +131,7 @@ export function ScanArrival({
               {event.groom}
             </span>
           </div>
-          <p className="mt-5 text-xs uppercase tracking-[0.3em] text-champagne/85 sm:text-sm">
+          <p className="mt-4 text-xs uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
             {dateLong} · {event.city}
           </p>
         </div>
@@ -151,12 +144,9 @@ export function ScanArrival({
           {!selected ? (
             <div className="card-lux px-6 py-8 sm:px-9 sm:py-9">
               <div className="text-center">
-                <p className="eyebrow">Be Our Guest</p>
-                <h2 className="mt-3 text-3xl sm:text-4xl">Find Your Seat</h2>
-                <Ornament className="my-5" />
-                <p className="mx-auto max-w-sm text-sm leading-relaxed text-ink-soft">
-                  Enter your name to see your table for the evening and to
-                  download your personal program.
+                <h2 className="text-3xl sm:text-4xl">Find Your Seat</h2>
+                <p className="mx-auto mt-2.5 max-w-xs text-sm leading-relaxed text-ink-soft">
+                  Enter your name to find your table and download your program.
                 </p>
               </div>
 
@@ -219,26 +209,6 @@ export function ScanArrival({
               onReset={reset}
             />
           )}
-        </div>
-
-        {/* Quiet links to the rest of the celebration */}
-        <div
-          className="reveal-rise mt-8 flex items-center justify-center gap-6 text-champagne/80"
-          style={{ ["--reveal-delay" as string]: "0.3s" }}
-        >
-          <Link
-            href="/program"
-            className="text-[0.7rem] uppercase tracking-[0.24em] transition-colors hover:text-gold-light"
-          >
-            The Schedule
-          </Link>
-          <span className="text-gold/40">·</span>
-          <a
-            href="#celebration"
-            className="text-[0.7rem] uppercase tracking-[0.24em] transition-colors hover:text-gold-light"
-          >
-            Details
-          </a>
         </div>
        </div>
       </div>
