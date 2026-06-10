@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
@@ -92,60 +91,52 @@ export function ScanArrival({
   return (
     <section
       id="seat"
-      className="relative flex min-h-[100svh] scroll-mt-0 flex-col overflow-hidden bg-forest md:block"
+      className="relative flex min-h-[100svh] scroll-mt-0 items-center justify-center overflow-hidden bg-forest px-6 py-24"
     >
-      {/* Couple photograph — on phones a full, un-cropped band that sits BELOW
-          the seat finder (so both of them read clearly, never half-faded), and a
-          full-bleed cinematic backdrop on larger screens. */}
-      <div className="relative order-last h-[44svh] w-full shrink-0 md:absolute md:inset-0 md:order-none md:h-full">
-        <div className="absolute inset-0 md:animate-kenburns">
-          <Image
-            src="/images/couple-hero.jpg"
-            alt={event.coupleNames}
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover [object-position:50%_10%] md:[object-position:50%_26%]"
-          />
-        </div>
-        {/* Desktop: darken so the overlaid text stays legible. */}
-        <div className="absolute inset-0 hidden bg-gradient-to-b from-forest/70 via-forest/45 to-forest/90 md:block" />
-        {/* Mobile: a slim top blend so the photo melts out of the forest above
-            it — kept short so neither face is dimmed. */}
-        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-forest to-transparent md:hidden" />
-      </div>
+      {/* Premium forest backdrop with a warm, candlelit gold glow. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-forest-2 via-forest to-forest" />
+      <div
+        className="pointer-events-none absolute left-1/2 top-[20%] h-80 w-80 -translate-x-1/2 rounded-full opacity-40 blur-3xl"
+        style={{
+          background:
+            "radial-gradient(closest-side, color-mix(in srgb, var(--color-gold) 45%, transparent), transparent)",
+        }}
+      />
 
-      {/* Decorative gold frame — desktop only */}
-      <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
-      <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
+      {/* Decorative gold frame — an invitation border. */}
+      <div className="pointer-events-none absolute inset-4 border border-gold/25 sm:inset-6" />
+      <div className="pointer-events-none absolute inset-5 border border-gold/10 sm:inset-7" />
 
-      <div className="relative z-20 w-full px-6 pb-10 pt-24 md:absolute md:inset-0 md:flex md:items-center md:justify-center md:px-0 md:pb-0 md:pt-0">
-       <div className="mx-auto w-full max-w-xl">
-        {/* Couple masthead — names + date, nothing more */}
+      <div className="relative z-20 mx-auto w-full max-w-xl">
+        {/* Couple masthead */}
         <div className="reveal-rise text-center text-champagne">
-          <div className="flex flex-col items-center leading-[0.95]">
-            <span className="font-serif text-4xl font-light tracking-tight text-shadow-lux sm:text-6xl">
+          <p className="eyebrow" style={{ color: "var(--color-gold-light)" }}>
+            The Wedding Celebration of
+          </p>
+          <div className="mt-5 flex flex-col items-center leading-[0.95]">
+            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
               {event.bride}
             </span>
-            <span className="my-0.5 font-script text-3xl text-gold-light text-shadow-lux sm:text-5xl">
+            <span className="my-1 font-script text-4xl text-gold-light text-shadow-lux sm:text-6xl">
               &amp;
             </span>
-            <span className="font-serif text-4xl font-light tracking-tight text-shadow-lux sm:text-6xl">
+            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
               {event.groom}
             </span>
           </div>
-          <p className="mt-3 text-[0.7rem] uppercase tracking-[0.28em] text-champagne/80 sm:mt-4 sm:text-sm">
+          <p className="mt-5 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
             {dateLong} · {event.city}
           </p>
+          <Ornament className="mx-auto mt-6" color="var(--color-gold-light)" />
         </div>
 
         {/* The arrival card — name entry, or seat reveal */}
         <div
-          className="reveal-rise mt-5 sm:mt-9"
+          className="reveal-rise mt-8"
           style={{ ["--reveal-delay" as string]: "0.15s" }}
         >
           {!selected ? (
-            <div className="card-lux px-6 py-6 sm:px-9 sm:py-9">
+            <div className="card-lux px-6 py-7 sm:px-9 sm:py-9">
               <div className="text-center">
                 <h2 className="text-3xl sm:text-4xl">Find Your Seat</h2>
                 <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
@@ -213,7 +204,6 @@ export function ScanArrival({
             />
           )}
         </div>
-       </div>
       </div>
     </section>
   );
