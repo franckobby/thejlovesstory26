@@ -1,31 +1,53 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useState } from "react";
+import type { EventDetails, ProgramData } from "@/lib/types";
+import { generateProgramPdf } from "@/lib/programPdf";
 
 export function ProgramActions({
+  event,
+  program,
   guestName = "",
   tableLabel = "",
+  groupLabel = "",
 }: {
+  event: EventDetails;
+  program: ProgramData;
   guestName?: string;
   tableLabel?: string;
+  groupLabel?: string;
 }) {
-  // Give the saved PDF a personal filename. window.print() uses document.title
-  // as the default "Save as PDF" name, so set it while this page is shown.
-  useEffect(() => {
-    if (!guestName) return;
-    const prev = document.title;
-    const safe = guestName.replace(/[^\p{L}\p{N} ]/gu, "").trim() || "Guest";
-    document.title = `Program · ${safe}${tableLabel ? ` · ${tableLabel}` : ""}`;
-    return () => {
-      document.title = prev;
-    };
-  }, [guestName, tableLabel]);
+  const [downloading, setDownloading] = useState(false);
+
+  async function download() {
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      await generateProgramPdf({
+        event,
+        program,
+        guestName: guestName || undefined,
+        tableLabel: tableLabel || undefined,
+        groupLabel: groupLabel || undefined,
+      });
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   return (
     <div className="no-print mx-auto mb-12 flex max-w-xl flex-col items-center justify-center gap-3 sm:flex-row">
-      <button onClick={() => window.print()} className="btn-gold w-full sm:w-auto">
-        {guestName ? "Download Your Program" : "Download / Print"}
+      <button
+        onClick={download}
+        disabled={downloading}
+        className="btn-gold w-full sm:w-auto"
+      >
+        {downloading
+          ? "Preparing…"
+          : guestName
+            ? "Download Your Program"
+            : "Download Program"}
       </button>
       <Link href="/#seat" className="btn-outline w-full sm:w-auto">
         Find Your Seat

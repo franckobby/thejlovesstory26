@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getEvent } from "@/lib/store";
+import { getEvent, getProgram } from "@/lib/store";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ScanArrival } from "@/components/ScanArrival";
 import { Gallery } from "@/components/Gallery";
@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 // a guest sees is the prompt to enter their name. After the seat reveal they
 // can download a personalized program. The original landing lives at /classic.
 export default async function Home() {
-  const event = await getEvent();
+  const [event, program] = await Promise.all([getEvent(), getProgram()]);
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -27,7 +27,7 @@ export default async function Home() {
     <>
       <SiteHeader monogram={event.monogram} variant="overlay" />
       <main>
-        <ScanArrival event={event} />
+        <ScanArrival event={event} program={program} />
 
         {/* When & Where */}
         <section

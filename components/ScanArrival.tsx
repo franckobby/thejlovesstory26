@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import type { EventDetails, SeatMatch } from "@/lib/types";
+import type { EventDetails, ProgramData, SeatMatch } from "@/lib/types";
+import { generateProgramPdf } from "@/lib/programPdf";
 import { Ornament } from "./Ornament";
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
@@ -15,7 +16,13 @@ const EASE = [0.2, 0.8, 0.2, 1] as const;
  * matched, we reveal the table and offer a personalized program download that
  * carries their name + seat through to the printable order of service.
  */
-export function ScanArrival({ event }: { event: EventDetails }) {
+export function ScanArrival({
+  event,
+  program,
+}: {
+  event: EventDetails;
+  program: ProgramData;
+}) {
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState<SeatMatch[]>([]);
   const [loading, setLoading] = useState(false);
@@ -202,7 +209,12 @@ export function ScanArrival({ event }: { event: EventDetails }) {
               </div>
             </div>
           ) : (
-            <SeatReveal match={selected} onReset={reset} />
+            <SeatReveal
+              match={selected}
+              event={event}
+              program={program}
+              onReset={reset}
+            />
           )}
         </div>
 
@@ -232,21 +244,36 @@ export function ScanArrival({ event }: { event: EventDetails }) {
 
 function SeatReveal({
   match,
+  event,
+  program,
   onReset,
 }: {
   match: SeatMatch;
+  event: EventDetails;
+  program: ProgramData;
   onReset: () => void;
 }) {
+  const [downloading, setDownloading] = useState(false);
   const tableNumber =
     match.tableLabel.replace(/[^0-9]/g, "") || match.tableLabel;
 
-  // Personalized program — carries the guest's name + seat into the printable
-  // order of service so the downloaded PDF is theirs.
-  const programHref = `/program?for=${encodeURIComponent(
-    match.name
-  )}&table=${encodeURIComponent(match.tableLabel)}${
-    match.category ? `&group=${encodeURIComponent(match.category)}` : ""
-  }`;
+  // Generate a personalized program PDF (with the guest's name + seat) and
+  // download it straight away — no print dialog.
+  async function downloadProgram() {
+    if (downloading) return;
+    setDownloading(true);
+    try {
+      await generateProgramPdf({
+        event,
+        program,
+        guestName: match.name,
+        tableLabel: match.tableLabel,
+        groupLabel: match.category ?? undefined,
+      });
+    } finally {
+      setDownloading(false);
+    }
+  }
 
   return (
     <motion.div
@@ -338,10 +365,14 @@ function SeatReveal({
         transition={{ delay: 0.56 }}
         className="mt-9"
       >
-        <Link href={programHref} className="btn-gold w-full">
+        <button
+          onClick={downloadProgram}
+          disabled={downloading}
+          className="btn-gold w-full"
+        >
           <DownloadIcon />
-          Download Your Program
-        </Link>
+          {downloading ? "Preparing…" : "Download Your Program"}
+        </button>
         <p className="mt-3 text-xs text-ink-soft/80">
           Your name &amp; table are printed on it — a keepsake for the day.
         </p>

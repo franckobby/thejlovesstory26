@@ -66,7 +66,13 @@ export default async function ProgramPage({
       <SiteHeader monogram={event.monogram} variant="solid" />
       <main className="bg-ivory px-6 pb-24 pt-28 sm:pt-32">
         <div className="print-sheet mx-auto max-w-2xl">
-          <ProgramActions guestName={guestName} tableLabel={tableLabel} />
+          <ProgramActions
+            event={event}
+            program={program}
+            guestName={guestName}
+            tableLabel={tableLabel}
+            groupLabel={groupLabel}
+          />
 
           {/* Personalized place card — prints onto the PDF */}
           {guestName && (
