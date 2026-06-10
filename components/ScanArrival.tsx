@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { EventDetails, ProgramData, SeatMatch } from "@/lib/types";
-import { generateProgramPdf, viewProgramPdf } from "@/lib/programPdf";
+import { generateProgramPdf } from "@/lib/programPdf";
 import { Ornament } from "./Ornament";
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
@@ -96,7 +97,7 @@ export function ScanArrival({
       {/* Photograph — a framed band on phones (so both the standing groom and
           the seated bride stay in view above the card), a full-bleed backdrop
           on larger screens. */}
-      <div className="relative h-[34svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
+      <div className="relative h-[30svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
         <div className="absolute inset-0 md:animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
@@ -104,7 +105,7 @@ export function ScanArrival({
             fill
             priority
             sizes="100vw"
-            className="object-cover [object-position:50%_30%] md:[object-position:50%_26%]"
+            className="object-cover [object-position:50%_18%] md:[object-position:50%_26%]"
           />
         </div>
         {/* Fade the photo into the forest section below on mobile. */}
@@ -116,7 +117,7 @@ export function ScanArrival({
       <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
       <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
 
-      <div className="relative z-20 flex w-full flex-1 items-center justify-center px-6 pb-8 pt-5 md:absolute md:inset-0 md:px-0 md:pb-0 md:pt-0">
+      <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-8 pt-6 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
        <div className="w-full max-w-xl">
         {/* Couple masthead — names + date, nothing more */}
         <div className="reveal-rise text-center text-champagne">
@@ -227,28 +228,33 @@ function SeatReveal({
   program: ProgramData;
   onReset: () => void;
 }) {
-  const [busy, setBusy] = useState<"view" | "download" | null>(null);
+  const [downloading, setDownloading] = useState(false);
   const tableNumber =
     match.tableLabel.replace(/[^0-9]/g, "") || match.tableLabel;
 
-  const pdfOpts = {
-    event,
-    program,
-    guestName: match.name,
-    tableLabel: match.tableLabel,
-    groupLabel: match.category ?? undefined,
-  };
+  // Schedule page, personalized with the guest's name + seat (shows the place
+  // card on the order of service).
+  const programHref = `/program?for=${encodeURIComponent(
+    match.name
+  )}&table=${encodeURIComponent(match.tableLabel)}${
+    match.category ? `&group=${encodeURIComponent(match.category)}` : ""
+  }`;
 
-  // Build the guest's personalized program (name + seat) and either open it in
-  // a new tab to view, or download it straight away — no print dialog.
-  async function handleProgram(action: "view" | "download") {
-    if (busy) return;
-    setBusy(action);
+  // Build the guest's personalized program PDF (name + seat) and download it
+  // straight away — no print dialog.
+  async function downloadProgram() {
+    if (downloading) return;
+    setDownloading(true);
     try {
-      if (action === "view") await viewProgramPdf(pdfOpts);
-      else await generateProgramPdf(pdfOpts);
+      await generateProgramPdf({
+        event,
+        program,
+        guestName: match.name,
+        tableLabel: match.tableLabel,
+        groupLabel: match.category ?? undefined,
+      });
     } finally {
-      setBusy(null);
+      setDownloading(false);
     }
   }
 
@@ -345,25 +351,21 @@ function SeatReveal({
       >
         <p className="eyebrow">Your Program</p>
         <div className="mt-3 flex gap-3">
-          <button
-            onClick={() => handleProgram("view")}
-            disabled={busy !== null}
-            className="btn-outline flex-1 px-0"
-          >
+          <Link href={programHref} className="btn-outline flex-1 px-0">
             <ViewIcon />
-            {busy === "view" ? "Opening…" : "View"}
-          </button>
+            View Schedule
+          </Link>
           <button
-            onClick={() => handleProgram("download")}
-            disabled={busy !== null}
+            onClick={downloadProgram}
+            disabled={downloading}
             className="btn-gold flex-1 px-0"
           >
             <DownloadIcon />
-            {busy === "download" ? "Preparing…" : "Download"}
+            {downloading ? "Preparing…" : "Download"}
           </button>
         </div>
         <p className="mt-3 text-xs text-ink-soft/80">
-          Your name &amp; table are printed on it — a keepsake for the day.
+          View the full order of service, or download your personalized keepsake.
         </p>
       </motion.div>
 
