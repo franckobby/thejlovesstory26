@@ -34,7 +34,7 @@ type Doc = any;
  * an optional personalized place card (guest name + seat), two timeline
  * sections with a gold rail, and a closing. Returns the jsPDF doc.
  */
-function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
+export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
   const { event, program, guestName, tableLabel, groupLabel } = opts;
   const doc: Doc = new jsPDFCtor({ unit: "mm", format: "a4" });
 
@@ -180,7 +180,7 @@ function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
         charSpace: 0.6,
       });
     }
-    y += h + 18;
+    y += h + 13;
   }
 
   // ---- Timeline section ----
@@ -194,7 +194,7 @@ function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
     dc(GOLD);
     doc.setLineWidth(0.4);
     doc.line(centerX - 10, y, centerX + 10, y);
-    y += 11;
+    y += 9;
 
     const timeW = 22;
     const railX = marginX + timeW + 6;
@@ -212,7 +212,7 @@ function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
         descLines = doc.splitTextToSize(it.description, textW) as string[];
       }
       const blockH =
-        Math.max(titleLines.length * 5.6 + descLines.length * 4.3, 6) + 7;
+        Math.max(titleLines.length * 5.0 + descLines.length * 3.9, 6) + 4;
       ensure(blockH);
       const top = y;
 
@@ -225,7 +225,7 @@ function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       // Rail + dot
       dc(GOLD);
       doc.setLineWidth(0.25);
-      doc.line(railX, top - 2.5, railX, top + blockH - 4);
+      doc.line(railX, top - 2.5, railX, top + blockH - 3);
       fc(GOLD);
       doc.circle(railX, top - 0.6, 1.1, "F");
       fc(CREAM);
@@ -238,22 +238,22 @@ function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       let ty = y;
       for (const line of titleLines) {
         doc.text(line, textX, ty);
-        ty += 5.6;
+        ty += 5.0;
       }
       // Description
       if (descLines.length) {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.6);
         tc(INK_SOFT);
-        ty += 0.5;
+        ty += 0.4;
         for (const line of descLines) {
           doc.text(line, textX, ty);
-          ty += 4.3;
+          ty += 3.9;
         }
       }
       y = top + blockH;
     }
-    y += 8;
+    y += 6;
   };
 
   section("The Ceremony", program.ceremony);
