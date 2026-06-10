@@ -14,16 +14,16 @@ export const dynamic = "force-dynamic";
 
 function Timeline({ items }: { items: ProgramItem[] }) {
   return (
-    <ol className="mt-8">
+    <ol className="mt-7">
       {items.map((it, i) => (
         <li
           key={`${it.time}-${i}`}
-          className="print-avoid-break grid grid-cols-[5rem_1fr] gap-5 sm:grid-cols-[7rem_1fr] sm:gap-7"
+          className="print-avoid-break grid grid-cols-[4.5rem_1fr] gap-4 sm:grid-cols-[7rem_1fr] sm:gap-7"
         >
           <div className="pt-0.5 text-right font-serif text-base text-gold-deep sm:text-lg">
             {it.time}
           </div>
-          <div className="relative border-l border-gold/30 pb-8 pl-6">
+          <div className="relative border-l border-gold/30 pb-8 pl-5 sm:pl-6">
             <span className="absolute -left-[5px] top-[7px] h-2.5 w-2.5 rounded-full bg-gold ring-4 ring-ivory" />
             <h4 className="font-serif text-xl text-ink sm:text-2xl">{it.title}</h4>
             {it.description && (
@@ -55,95 +55,77 @@ export default async function ProgramPage({
     year: "numeric",
   });
 
-  // Personalization carried over from the seat finder. When present, the guest's
-  // name + table are printed on the program so the downloaded PDF is theirs.
+  // Personalization carried over from the seat finder (optional).
   const guestName = params.for?.trim() || "";
   const tableLabel = params.table?.trim() || "";
   const groupLabel = params.group?.trim() || "";
 
   return (
     <>
-      <SiteHeader monogram={event.monogram} variant="solid" />
-      <main className="bg-ivory px-6 pb-24 pt-28 sm:pt-32">
+      <SiteHeader monogram={event.monogram} variant="solid" showSeatLink={false} />
+      <main className="bg-ivory px-6 pb-24 pt-24 sm:pt-28">
         <div className="print-sheet mx-auto max-w-2xl">
-          <ProgramActions
-            event={event}
-            program={program}
-            guestName={guestName}
-            tableLabel={tableLabel}
-            groupLabel={groupLabel}
-          />
+          {/* Compact header — the schedule itself is the focus. A small
+              download lives up here so it never pushes the program down. */}
+          <header className="flex items-start justify-between gap-4 border-b border-gold/20 pb-5">
+            <div>
+              <p className="eyebrow">Order of Service</p>
+              <h1 className="mt-2 font-serif text-3xl font-light text-ink sm:text-4xl">
+                {event.coupleNames}
+              </h1>
+              <p className="mt-1.5 text-[0.7rem] uppercase tracking-[0.22em] text-ink-soft">
+                {dateLong} · {event.city}
+              </p>
+            </div>
+            <ProgramActions
+              event={event}
+              program={program}
+              guestName={guestName}
+              tableLabel={tableLabel}
+              groupLabel={groupLabel}
+            />
+          </header>
 
-          {/* Personalized place card — prints onto the PDF */}
+          {/* Slim personalized line (only when arriving from a seat reveal). */}
           {guestName && (
-            <div className="print-avoid-break mb-12 overflow-hidden rounded-sm border border-gold/40 bg-gradient-to-br from-[#fffdf8] to-cream shadow-[var(--shadow-soft)]">
-              <div className="flex flex-col items-center gap-1 px-6 py-7 text-center sm:flex-row sm:justify-between sm:px-9 sm:text-left">
-                <div>
-                  <p className="eyebrow">Prepared for</p>
-                  <p className="mt-1.5 font-script text-4xl text-ink sm:text-5xl">
-                    {guestName}
-                  </p>
-                </div>
-                <div className="mt-3 flex flex-col items-center sm:mt-0 sm:items-end">
-                  <p className="text-[0.62rem] uppercase tracking-[0.28em] text-gold-deep">
-                    Your Seat
-                  </p>
-                  <p className="mt-1 font-serif text-3xl text-ink sm:text-4xl">
-                    {tableLabel || "—"}
-                  </p>
-                  {groupLabel && (
-                    <p className="mt-0.5 text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
-                      {groupLabel}
-                    </p>
-                  )}
-                </div>
-              </div>
+            <div className="mt-5 flex flex-wrap items-baseline gap-x-2.5 gap-y-1 rounded-sm border border-gold/25 bg-cream/40 px-4 py-3">
+              <span className="text-[0.6rem] uppercase tracking-[0.2em] text-gold-deep">
+                Prepared for
+              </span>
+              <span className="font-serif text-lg text-ink">{guestName}</span>
+              <span className="text-gold/50">·</span>
+              <span className="font-serif text-lg text-ink">
+                {tableLabel || "—"}
+              </span>
+              {groupLabel && (
+                <span className="text-[0.6rem] uppercase tracking-[0.18em] text-ink-soft">
+                  · {groupLabel}
+                </span>
+              )}
             </div>
           )}
 
-          {/* Masthead */}
-          <header className="text-center">
-            <p className="font-serif text-lg tracking-[0.2em] text-gold-deep">
-              {event.monogram}
-            </p>
-            <p className="eyebrow mt-6">The Wedding Celebration of</p>
-            <h1 className="mt-4 font-script text-6xl text-ink sm:text-7xl">
-              {event.coupleNames}
-            </h1>
-            <Ornament className="mx-auto my-7" />
-            <p className="text-sm uppercase tracking-[0.26em] text-ink-soft">
-              {dateLong}
-            </p>
-            <p className="mt-1 text-sm uppercase tracking-[0.26em] text-ink-soft">
-              {event.ceremonyVenue} · {event.city}
-            </p>
-          </header>
-
-          {/* Ceremony */}
-          <section className="mt-16 print-avoid-break">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl">The Ceremony</h2>
-              <div className="mx-auto mt-3 h-px w-14 bg-gold/50" />
-            </div>
+          {/* Ceremony — primary content */}
+          <section className="mt-10 print-avoid-break">
+            <h2 className="text-2xl text-ink sm:text-3xl">The Ceremony</h2>
+            <div className="mt-2 h-px w-14 bg-gold/50" />
             <Timeline items={program.ceremony} />
           </section>
 
           {/* Reception */}
-          <section className="mt-14">
-            <div className="text-center">
-              <h2 className="text-3xl sm:text-4xl">The Reception</h2>
-              <div className="mx-auto mt-3 h-px w-14 bg-gold/50" />
-            </div>
+          <section className="mt-12">
+            <h2 className="text-2xl text-ink sm:text-3xl">The Reception</h2>
+            <div className="mt-2 h-px w-14 bg-gold/50" />
             <Timeline items={program.reception} />
           </section>
 
           {/* Closing */}
-          <footer className="mt-16 text-center print-avoid-break">
-            <Ornament className="mx-auto mb-6" />
-            <p className="mx-auto max-w-md font-serif text-xl italic leading-relaxed text-ink">
+          <footer className="mt-14 text-center print-avoid-break">
+            <Ornament className="mx-auto mb-5" />
+            <p className="mx-auto max-w-md font-serif text-lg italic leading-relaxed text-ink">
               {event.thankYou}
             </p>
-            <p className="mt-6 text-sm uppercase tracking-[0.3em] text-gold-deep">
+            <p className="mt-5 text-xs uppercase tracking-[0.3em] text-gold-deep">
               {event.hashtag}
             </p>
           </footer>

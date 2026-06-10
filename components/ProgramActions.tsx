@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import type { EventDetails, ProgramData } from "@/lib/types";
 import { generateProgramPdf } from "@/lib/programPdf";
 
+/** A small, unobtrusive "download as PDF" control for the schedule page. */
 export function ProgramActions({
   event,
   program,
@@ -37,21 +37,28 @@ export function ProgramActions({
   }
 
   return (
-    <div className="no-print mx-auto mb-12 flex max-w-xl flex-col items-center justify-center gap-3 sm:flex-row">
-      <button
-        onClick={download}
-        disabled={downloading}
-        className="btn-gold w-full sm:w-auto"
+    <button
+      onClick={download}
+      disabled={downloading}
+      aria-label="Download the program as a PDF"
+      className="no-print inline-flex shrink-0 items-center gap-1.5 rounded-sm border border-gold/40 bg-[#fffdf8] px-3 py-2 text-[0.6rem] uppercase tracking-[0.18em] text-gold-deep shadow-[var(--shadow-soft)] transition-colors hover:bg-gold/10 disabled:opacity-60"
+    >
+      <svg
+        width="13"
+        height="13"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
       >
-        {downloading
-          ? "Preparing…"
-          : guestName
-            ? "Download Your Program"
-            : "Download Program"}
-      </button>
-      <Link href="/#seat" className="btn-outline w-full sm:w-auto">
-        Find Your Seat
-      </Link>
-    </div>
+        <path d="M12 3v12" />
+        <path d="m7 11 5 5 5-5" />
+        <path d="M5 21h14" />
+      </svg>
+      {downloading ? "…" : "PDF"}
+    </button>
   );
 }
