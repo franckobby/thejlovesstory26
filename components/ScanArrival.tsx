@@ -108,27 +108,30 @@ export function ScanArrival({
       <div className="pointer-events-none absolute inset-5 border border-gold/10 sm:inset-7" />
 
       <div className="relative z-20 mx-auto w-full max-w-xl">
-        {/* Couple masthead — names + date */}
-        <div className="reveal-rise text-center text-champagne">
-          <div className="flex flex-col items-center leading-[0.95]">
-            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
-              {event.bride}
-            </span>
-            <span className="my-1 font-script text-4xl text-gold-light text-shadow-lux sm:text-6xl">
-              &amp;
-            </span>
-            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
-              {event.groom}
-            </span>
+        {/* Couple masthead — names + date. Hidden once a seat is revealed so the
+            reveal card takes over the screen. */}
+        {!selected && (
+          <div className="reveal-rise text-center text-champagne">
+            <div className="flex flex-col items-center leading-[0.95]">
+              <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
+                {event.bride}
+              </span>
+              <span className="my-1 font-script text-4xl text-gold-light text-shadow-lux sm:text-6xl">
+                &amp;
+              </span>
+              <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
+                {event.groom}
+              </span>
+            </div>
+            <p className="mt-4 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
+              {dateLong} · {event.city}
+            </p>
           </div>
-          <p className="mt-4 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
-            {dateLong} · {event.city}
-          </p>
-        </div>
+        )}
 
         {/* The arrival card — name entry, or seat reveal */}
         <div
-          className="reveal-rise mt-8"
+          className={`reveal-rise ${selected ? "" : "mt-8"}`}
           style={{ ["--reveal-delay" as string]: "0.15s" }}
         >
           {!selected ? (
