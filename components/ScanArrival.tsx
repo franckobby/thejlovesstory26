@@ -94,10 +94,10 @@ export function ScanArrival({
       id="seat"
       className="relative flex min-h-[100svh] scroll-mt-0 flex-col overflow-hidden bg-forest md:block"
     >
-      {/* Photograph — a framed band on phones (so both the standing groom and
-          the seated bride stay in view above the card), a full-bleed backdrop
-          on larger screens. */}
-      <div className="relative h-[30svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
+      {/* Couple photograph — on phones a full, un-cropped band that sits BELOW
+          the seat finder (so both of them read clearly, never half-faded), and a
+          full-bleed cinematic backdrop on larger screens. */}
+      <div className="relative order-last h-[44svh] w-full shrink-0 md:absolute md:inset-0 md:order-none md:h-full">
         <div className="absolute inset-0 md:animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
@@ -105,20 +105,22 @@ export function ScanArrival({
             fill
             priority
             sizes="100vw"
-            className="object-cover [object-position:50%_18%] md:[object-position:50%_26%]"
+            className="object-cover [object-position:50%_10%] md:[object-position:50%_26%]"
           />
         </div>
-        {/* Fade the photo into the forest section below on mobile. */}
-        <div className="absolute inset-0 bg-gradient-to-b from-forest/30 via-forest/10 to-forest md:from-forest/70 md:via-forest/45 md:to-forest/90" />
-        <div className="absolute inset-0 bg-forest/10 md:bg-forest/20" />
+        {/* Desktop: darken so the overlaid text stays legible. */}
+        <div className="absolute inset-0 hidden bg-gradient-to-b from-forest/70 via-forest/45 to-forest/90 md:block" />
+        {/* Mobile: a slim top blend so the photo melts out of the forest above
+            it — kept short so neither face is dimmed. */}
+        <div className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-forest to-transparent md:hidden" />
       </div>
 
       {/* Decorative gold frame — desktop only */}
       <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
       <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
 
-      <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-8 pt-6 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
-       <div className="w-full max-w-xl">
+      <div className="relative z-20 w-full px-6 pb-10 pt-24 md:absolute md:inset-0 md:flex md:items-center md:justify-center md:px-0 md:pb-0 md:pt-0">
+       <div className="mx-auto w-full max-w-xl">
         {/* Couple masthead — names + date, nothing more */}
         <div className="reveal-rise text-center text-champagne">
           <div className="flex flex-col items-center leading-[0.95]">
