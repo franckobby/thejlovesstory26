@@ -38,8 +38,16 @@ function Timeline({ items }: { items: ProgramItem[] }) {
   );
 }
 
-export default async function ProgramPage() {
-  const [event, program] = await Promise.all([getEvent(), getProgram()]);
+export default async function ProgramPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ for?: string; table?: string; group?: string }>;
+}) {
+  const [event, program, params] = await Promise.all([
+    getEvent(),
+    getProgram(),
+    searchParams,
+  ]);
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
@@ -47,12 +55,45 @@ export default async function ProgramPage() {
     year: "numeric",
   });
 
+  // Personalization carried over from the seat finder. When present, the guest's
+  // name + table are printed on the program so the downloaded PDF is theirs.
+  const guestName = params.for?.trim() || "";
+  const tableLabel = params.table?.trim() || "";
+  const groupLabel = params.group?.trim() || "";
+
   return (
     <>
       <SiteHeader monogram={event.monogram} variant="solid" />
       <main className="bg-ivory px-6 pb-24 pt-28 sm:pt-32">
         <div className="print-sheet mx-auto max-w-2xl">
-          <ProgramActions />
+          <ProgramActions guestName={guestName} tableLabel={tableLabel} />
+
+          {/* Personalized place card — prints onto the PDF */}
+          {guestName && (
+            <div className="print-avoid-break mb-12 overflow-hidden rounded-sm border border-gold/40 bg-gradient-to-br from-[#fffdf8] to-cream shadow-[var(--shadow-soft)]">
+              <div className="flex flex-col items-center gap-1 px-6 py-7 text-center sm:flex-row sm:justify-between sm:px-9 sm:text-left">
+                <div>
+                  <p className="eyebrow">Prepared for</p>
+                  <p className="mt-1.5 font-script text-4xl text-ink sm:text-5xl">
+                    {guestName}
+                  </p>
+                </div>
+                <div className="mt-3 flex flex-col items-center sm:mt-0 sm:items-end">
+                  <p className="text-[0.62rem] uppercase tracking-[0.28em] text-gold-deep">
+                    Your Seat
+                  </p>
+                  <p className="mt-1 font-serif text-3xl text-ink sm:text-4xl">
+                    {tableLabel || "—"}
+                  </p>
+                  {groupLabel && (
+                    <p className="mt-0.5 text-[0.62rem] uppercase tracking-[0.2em] text-ink-soft">
+                      {groupLabel}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Masthead */}
           <header className="text-center">
