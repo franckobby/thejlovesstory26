@@ -7,9 +7,13 @@ import clsx from "clsx";
 export function SiteHeader({
   monogram,
   variant = "overlay",
+  showSeatLink = true,
 }: {
   monogram: string;
   variant?: "overlay" | "solid";
+  /** Hide the "Find Your Seat" nav link (redundant on the home page, which is
+   *  itself the seat finder). */
+  showSeatLink?: boolean;
 }) {
   const [scrolled, setScrolled] = useState(variant === "solid");
 
@@ -40,12 +44,14 @@ export function SiteHeader({
           {monogram}
         </Link>
         <nav className="flex items-center gap-5 sm:gap-9">
-          <Link
-            href="/#seat"
-            className="text-[0.7rem] uppercase tracking-[0.22em] text-champagne/90 transition-colors hover:text-gold-light"
-          >
-            Find Your Seat
-          </Link>
+          {showSeatLink && (
+            <Link
+              href="/#seat"
+              className="text-[0.7rem] uppercase tracking-[0.22em] text-champagne/90 transition-colors hover:text-gold-light"
+            >
+              Find Your Seat
+            </Link>
+          )}
           <Link
             href="/program"
             className="text-[0.7rem] uppercase tracking-[0.22em] text-champagne/90 transition-colors hover:text-gold-light"
