@@ -96,7 +96,7 @@ export function ScanArrival({
       {/* Photograph — a framed band on phones (so both the standing groom and
           the seated bride stay in view above the card), a full-bleed backdrop
           on larger screens. */}
-      <div className="relative h-[46svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
+      <div className="relative h-[34svh] w-full shrink-0 md:absolute md:inset-0 md:h-full">
         <div className="absolute inset-0 md:animate-kenburns">
           <Image
             src="/images/couple-hero.jpg"
@@ -116,41 +116,41 @@ export function ScanArrival({
       <div className="pointer-events-none absolute inset-5 z-10 hidden border border-gold/30 md:block" />
       <div className="pointer-events-none absolute inset-6 z-10 hidden border border-gold/10 md:block" />
 
-      <div className="relative z-20 flex w-full flex-1 items-start justify-center px-6 pb-16 pt-8 md:absolute md:inset-0 md:items-center md:px-0 md:pb-0 md:pt-0">
+      <div className="relative z-20 flex w-full flex-1 items-center justify-center px-6 pb-8 pt-5 md:absolute md:inset-0 md:px-0 md:pb-0 md:pt-0">
        <div className="w-full max-w-xl">
         {/* Couple masthead — names + date, nothing more */}
         <div className="reveal-rise text-center text-champagne">
           <div className="flex flex-col items-center leading-[0.95]">
-            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-6xl">
+            <span className="font-serif text-4xl font-light tracking-tight text-shadow-lux sm:text-6xl">
               {event.bride}
             </span>
-            <span className="my-0.5 font-script text-4xl text-gold-light text-shadow-lux sm:text-5xl">
+            <span className="my-0.5 font-script text-3xl text-gold-light text-shadow-lux sm:text-5xl">
               &amp;
             </span>
-            <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-6xl">
+            <span className="font-serif text-4xl font-light tracking-tight text-shadow-lux sm:text-6xl">
               {event.groom}
             </span>
           </div>
-          <p className="mt-4 text-xs uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
+          <p className="mt-3 text-[0.7rem] uppercase tracking-[0.28em] text-champagne/80 sm:mt-4 sm:text-sm">
             {dateLong} · {event.city}
           </p>
         </div>
 
         {/* The arrival card — name entry, or seat reveal */}
         <div
-          className="reveal-rise mt-9"
+          className="reveal-rise mt-5 sm:mt-9"
           style={{ ["--reveal-delay" as string]: "0.15s" }}
         >
           {!selected ? (
-            <div className="card-lux px-6 py-8 sm:px-9 sm:py-9">
+            <div className="card-lux px-6 py-6 sm:px-9 sm:py-9">
               <div className="text-center">
                 <h2 className="text-3xl sm:text-4xl">Find Your Seat</h2>
-                <p className="mx-auto mt-2.5 max-w-xs text-sm leading-relaxed text-ink-soft">
+                <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
                   Enter your name to find your table and download your program.
                 </p>
               </div>
 
-              <form onSubmit={onSubmit} className="relative mt-7">
+              <form onSubmit={onSubmit} className="relative mt-5 sm:mt-7">
                 <input
                   ref={inputRef}
                   value={query}
