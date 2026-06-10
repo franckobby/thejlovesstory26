@@ -91,7 +91,7 @@ export function ScanArrival({
   return (
     <section
       id="seat"
-      className="relative flex min-h-[100svh] scroll-mt-0 items-center justify-center overflow-hidden bg-forest px-6 py-24"
+      className="relative flex min-h-[100svh] scroll-mt-0 items-start justify-center overflow-hidden bg-forest px-6 pb-16 pt-[16svh] md:items-center md:py-24"
     >
       {/* Premium forest backdrop with a warm, candlelit gold glow. */}
       <div className="absolute inset-0 bg-gradient-to-b from-forest-2 via-forest to-forest" />
@@ -108,12 +108,9 @@ export function ScanArrival({
       <div className="pointer-events-none absolute inset-5 border border-gold/10 sm:inset-7" />
 
       <div className="relative z-20 mx-auto w-full max-w-xl">
-        {/* Couple masthead */}
+        {/* Couple masthead — names + date */}
         <div className="reveal-rise text-center text-champagne">
-          <p className="eyebrow" style={{ color: "var(--color-gold-light)" }}>
-            The Wedding Celebration of
-          </p>
-          <div className="mt-5 flex flex-col items-center leading-[0.95]">
+          <div className="flex flex-col items-center leading-[0.95]">
             <span className="font-serif text-5xl font-light tracking-tight text-shadow-lux sm:text-7xl">
               {event.bride}
             </span>
@@ -124,10 +121,9 @@ export function ScanArrival({
               {event.groom}
             </span>
           </div>
-          <p className="mt-5 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
+          <p className="mt-4 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80 sm:text-sm">
             {dateLong} · {event.city}
           </p>
-          <Ornament className="mx-auto mt-6" color="var(--color-gold-light)" />
         </div>
 
         {/* The arrival card — name entry, or seat reveal */}
@@ -136,15 +132,15 @@ export function ScanArrival({
           style={{ ["--reveal-delay" as string]: "0.15s" }}
         >
           {!selected ? (
-            <div className="card-lux px-6 py-7 sm:px-9 sm:py-9">
+            <div className="card-lux px-7 py-9 sm:px-10 sm:py-11">
               <div className="text-center">
-                <h2 className="text-3xl sm:text-4xl">Find Your Seat</h2>
-                <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-ink-soft">
+                <h2 className="text-4xl sm:text-5xl">Find Your Seat</h2>
+                <p className="mx-auto mt-3 max-w-xs text-sm leading-relaxed text-ink-soft">
                   Enter your name to find your table and download your program.
                 </p>
               </div>
 
-              <form onSubmit={onSubmit} className="relative mt-5 sm:mt-7">
+              <form onSubmit={onSubmit} className="relative mt-6 sm:mt-7">
                 <input
                   ref={inputRef}
                   value={query}
@@ -152,12 +148,12 @@ export function ScanArrival({
                   placeholder="Type your full name…"
                   autoComplete="off"
                   aria-label="Your full name"
-                  className="field text-center text-lg"
+                  className="field py-3.5 text-center text-lg"
                 />
                 <button
                   type="submit"
                   disabled={matches.length === 0}
-                  className="btn-gold mt-4 w-full"
+                  className="btn-gold mt-4 w-full py-4"
                 >
                   {loading ? "Searching…" : "Reveal My Table"}
                 </button>
