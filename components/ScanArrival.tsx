@@ -341,7 +341,7 @@ function SeatReveal({
         <div className="mt-3 flex gap-3">
           <Link href={programHref} className="btn-outline flex-1 px-0">
             <ViewIcon />
-            View Schedule
+            View
           </Link>
           <button
             onClick={downloadProgram}
