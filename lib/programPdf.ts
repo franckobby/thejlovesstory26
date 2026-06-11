@@ -86,115 +86,81 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
 
   frame();
 
-  // ---- Masthead ----
-  y = 30;
-  doc.setFont("times", "normal");
-  doc.setFontSize(12);
-  tc(GOLD_DEEP);
-  doc.text(event.monogram.toUpperCase(), centerX, y, {
-    align: "center",
-    charSpace: 3,
-  });
-
-  y = 41;
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(8);
-  tc(GOLD_DEEP);
-  doc.text("THE WEDDING CELEBRATION OF", centerX, y, {
-    align: "center",
-    charSpace: 1.6,
-  });
-
-  y = 57;
-  doc.setFont("times", "normal");
-  tc(INK);
-  doc.setFontSize(fitSize(event.coupleNames, contentW, 31, 18));
-  doc.text(event.coupleNames, centerX, y, { align: "center" });
-
-  y = 66;
-  ornament(y);
-
-  y = 74;
+  // ---- Compact header ----
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
     month: "long",
     day: "numeric",
     year: "numeric",
   });
+
+  y = 22;
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(8);
+  tc(GOLD_DEEP);
+  doc.text("WEDDING DAY SCHEDULE", centerX, y, {
+    align: "center",
+    charSpace: 1.8,
+  });
+
+  y = 31;
+  doc.setFont("times", "normal");
+  tc(INK);
+  doc.setFontSize(fitSize(event.coupleNames, contentW, 23, 16));
+  doc.text(event.coupleNames, centerX, y, { align: "center" });
+
+  y = 37.5;
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(8);
   tc(INK_SOFT);
-  doc.text(dateLong.toUpperCase(), centerX, y, {
+  doc.text(`${dateLong}  ·  ${event.city}`.toUpperCase(), centerX, y, {
     align: "center",
-    charSpace: 1,
+    charSpace: 0.8,
   });
 
-  y = 80;
-  doc.setFontSize(8.5);
-  doc.text(`${event.ceremonyVenue}  ·  ${event.city}`.toUpperCase(), centerX, y, {
-    align: "center",
-    charSpace: 1,
-  });
-  y = 92;
+  y = 43;
+  ornament(y);
+  y = 50;
 
-  // ---- Personalized place card ----
+  // ---- Slim personalized line ----
   if (guestName) {
-    const h = 30;
-    ensure(h + 12);
+    const h = 13;
     fc(CREAM);
     dc(GOLD);
-    doc.setLineWidth(0.5);
-    doc.roundedRect(marginX, y, contentW, h, 1.5, 1.5, "FD");
-    dc(GOLD);
-    doc.setLineWidth(0.2);
-    doc.line(centerX, y + 6, centerX, y + h - 6);
+    doc.setLineWidth(0.4);
+    doc.roundedRect(marginX, y, contentW, h, 1.2, 1.2, "FD");
 
-    const pad = 12;
-    // Left — name
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
+    doc.setFontSize(6.5);
     tc(GOLD_DEEP);
-    doc.text("PREPARED FOR", marginX + pad, y + 12, { charSpace: 1.4 });
-    doc.setFont("times", "italic");
-    tc(INK);
-    doc.setFontSize(fitSize(guestName, centerX - (marginX + pad) - 5, 19, 12));
-    doc.text(guestName, marginX + pad, y + 22);
+    doc.text("PREPARED FOR", centerX, y + 5, {
+      align: "center",
+      charSpace: 1.2,
+    });
 
-    // Right — seat
-    const rx = marginX + contentW - pad;
-    const rightMaxW = rx - centerX - 5;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(7.5);
-    tc(GOLD_DEEP);
-    doc.text("YOUR SEAT", rx, y + 12, { align: "right", charSpace: 1.4 });
+    const detail = [guestName, tableLabel || null, groupLabel || null]
+      .filter(Boolean)
+      .join("    ·    ");
     doc.setFont("times", "normal");
     tc(INK);
-    doc.setFontSize(fitSize(tableLabel || "—", rightMaxW, 19, 12));
-    doc.text(tableLabel || "—", rx, y + 22, { align: "right" });
-    if (groupLabel) {
-      doc.setFont("helvetica", "normal");
-      tc(INK_SOFT);
-      doc.setFontSize(fitSize(groupLabel.toUpperCase(), rightMaxW, 6.8, 5));
-      doc.text(groupLabel.toUpperCase(), rx, y + 27, {
-        align: "right",
-        charSpace: 0.6,
-      });
-    }
-    y += h + 13;
+    doc.setFontSize(fitSize(detail, contentW - 16, 12, 8));
+    doc.text(detail, centerX, y + 10.5, { align: "center" });
+
+    y += h + 8;
   }
 
   // ---- Timeline section ----
   const section = (title: string, items: ProgramItem[]) => {
-    ensure(26);
+    ensure(24);
     doc.setFont("times", "normal");
-    doc.setFontSize(19);
+    doc.setFontSize(17);
     tc(INK);
     doc.text(title, centerX, y, { align: "center" });
-    y += 3.5;
+    y += 3;
     dc(GOLD);
     doc.setLineWidth(0.4);
-    doc.line(centerX - 10, y, centerX + 10, y);
-    y += 9;
+    doc.line(centerX - 9, y, centerX + 9, y);
+    y += 7.5;
 
     const timeW = 26;
     const railX = marginX + timeW + 6;
@@ -224,15 +190,15 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       });
 
       let blockH = Math.max(
-        titleLines.length * 5.0 + descLines.length * 3.9,
+        titleLines.length * 4.8 + descLines.length * 3.7,
         6
       );
       for (const gb of groupBlocks) {
-        blockH += 2.6;
-        if (gb.label) blockH += 4.3;
-        for (const il of gb.itemLines) blockH += il.length * 3.9;
+        blockH += 2.2;
+        if (gb.label) blockH += 4.0;
+        for (const il of gb.itemLines) blockH += il.length * 3.7;
       }
-      blockH += 4;
+      blockH += 3.5;
 
       ensure(blockH);
       const top = y;
@@ -259,7 +225,7 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       let ty = y;
       for (const line of titleLines) {
         doc.text(line, textX, ty);
-        ty += 5.0;
+        ty += 4.8;
       }
       // Description
       if (descLines.length) {
@@ -269,18 +235,18 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
         ty += 0.4;
         for (const line of descLines) {
           doc.text(line, textX, ty);
-          ty += 3.9;
+          ty += 3.7;
         }
       }
       // Grouped sub-lists (participants / roles)
       for (const gb of groupBlocks) {
-        ty += 2.6;
+        ty += 2.2;
         if (gb.label) {
           doc.setFont("helvetica", "normal");
           doc.setFontSize(7);
           tc(GOLD_DEEP);
           doc.text(gb.label.toUpperCase(), textX, ty, { charSpace: 0.6 });
-          ty += 4.3;
+          ty += 4.0;
         }
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.8);
@@ -288,33 +254,34 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
         for (const il of gb.itemLines) {
           for (const line of il) {
             doc.text(line, textX, ty);
-            ty += 3.9;
+            ty += 3.7;
           }
         }
       }
       y = top + blockH;
     }
-    y += 6;
+    y += 5;
   };
 
   section("The Ceremony", program.ceremony);
   section("The Reception", program.reception);
 
   // ---- Closing ----
-  ensure(34);
+  ensure(28);
+  y += 2;
   ornament(y);
-  y += 10;
+  y += 8;
   doc.setFont("times", "italic");
-  doc.setFontSize(12.5);
+  doc.setFontSize(11);
   tc(INK);
   for (const line of doc.splitTextToSize(
     event.thankYou,
-    contentW - 24
+    contentW - 30
   ) as string[]) {
     doc.text(line, centerX, y, { align: "center" });
-    y += 6.2;
+    y += 5.4;
   }
-  y += 3;
+  y += 2;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   tc(GOLD_DEEP);
