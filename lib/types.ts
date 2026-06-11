@@ -28,10 +28,19 @@ export interface EventDetails {
   thankYou: string;
 }
 
+export interface ProgramGroup {
+  /** Optional heading for the group, e.g. "Officiants". */
+  label?: string;
+  /** Lines under the group, e.g. names / roles. */
+  items: string[];
+}
+
 export interface ProgramItem {
   time: string;
   title: string;
   description?: string;
+  /** Optional grouped sub-lists (participants, roles, etc.). */
+  groups?: ProgramGroup[];
 }
 
 export interface ProgramData {

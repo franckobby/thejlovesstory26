@@ -18,9 +18,9 @@ function Timeline({ items }: { items: ProgramItem[] }) {
       {items.map((it, i) => (
         <li
           key={`${it.time}-${i}`}
-          className="print-avoid-break grid grid-cols-[4.5rem_1fr] gap-4 sm:grid-cols-[7rem_1fr] sm:gap-7"
+          className="print-avoid-break grid grid-cols-[5.5rem_1fr] gap-3 sm:grid-cols-[7.5rem_1fr] sm:gap-6"
         >
-          <div className="pt-0.5 text-right font-serif text-base text-gold-deep sm:text-lg">
+          <div className="whitespace-nowrap pt-1 text-right font-serif text-sm text-gold-deep sm:text-base">
             {it.time}
           </div>
           <div className="relative border-l border-gold/30 pb-8 pl-5 sm:pl-6">
@@ -31,6 +31,25 @@ function Timeline({ items }: { items: ProgramItem[] }) {
                 {it.description}
               </p>
             )}
+            {it.groups?.map((g, gi) => (
+              <div key={gi} className="mt-3">
+                {g.label && (
+                  <p className="text-[0.62rem] uppercase tracking-[0.2em] text-gold-deep">
+                    {g.label}
+                  </p>
+                )}
+                <ul className="mt-1.5 space-y-1">
+                  {g.items.map((m, mi) => (
+                    <li
+                      key={mi}
+                      className="text-sm leading-snug text-ink-soft sm:text-[0.95rem]"
+                    >
+                      {m}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </li>
       ))}

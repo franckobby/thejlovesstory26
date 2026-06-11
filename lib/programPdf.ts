@@ -196,29 +196,50 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
     doc.line(centerX - 10, y, centerX + 10, y);
     y += 9;
 
-    const timeW = 22;
+    const timeW = 26;
     const railX = marginX + timeW + 6;
     const textX = railX + 7;
     const textW = contentW - (textX - marginX);
 
     for (const it of items) {
+      // ---- Measure everything first (for clean page breaks) ----
       doc.setFont("times", "normal");
       doc.setFontSize(12.5);
       const titleLines = doc.splitTextToSize(it.title, textW) as string[];
+
       let descLines: string[] = [];
       if (it.description) {
         doc.setFont("helvetica", "normal");
         doc.setFontSize(8.6);
         descLines = doc.splitTextToSize(it.description, textW) as string[];
       }
-      const blockH =
-        Math.max(titleLines.length * 5.0 + descLines.length * 3.9, 6) + 4;
+
+      const groupBlocks = (it.groups ?? []).map((g) => {
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.8);
+        const itemLines = g.items.map(
+          (m) => doc.splitTextToSize(m, textW - 2) as string[]
+        );
+        return { label: g.label, itemLines };
+      });
+
+      let blockH = Math.max(
+        titleLines.length * 5.0 + descLines.length * 3.9,
+        6
+      );
+      for (const gb of groupBlocks) {
+        blockH += 2.6;
+        if (gb.label) blockH += 4.3;
+        for (const il of gb.itemLines) blockH += il.length * 3.9;
+      }
+      blockH += 4;
+
       ensure(blockH);
       const top = y;
 
       // Time
       doc.setFont("times", "italic");
-      doc.setFontSize(10.5);
+      doc.setFontSize(9.5);
       tc(GOLD_DEEP);
       doc.text(it.time, marginX + timeW, y + 0.5, { align: "right" });
 
@@ -249,6 +270,26 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
         for (const line of descLines) {
           doc.text(line, textX, ty);
           ty += 3.9;
+        }
+      }
+      // Grouped sub-lists (participants / roles)
+      for (const gb of groupBlocks) {
+        ty += 2.6;
+        if (gb.label) {
+          doc.setFont("helvetica", "normal");
+          doc.setFontSize(7);
+          tc(GOLD_DEEP);
+          doc.text(gb.label.toUpperCase(), textX, ty, { charSpace: 0.6 });
+          ty += 4.3;
+        }
+        doc.setFont("helvetica", "normal");
+        doc.setFontSize(8.8);
+        tc(INK_SOFT);
+        for (const il of gb.itemLines) {
+          for (const line of il) {
+            doc.text(line, textX, ty);
+            ty += 3.9;
+          }
         }
       }
       y = top + blockH;
