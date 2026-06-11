@@ -23,6 +23,16 @@ import type { AppData, EventDetails, ProgramData, Table } from "./types";
 
 const ROW_ID = "main";
 
+/**
+ * Bump this whenever data/program.json changes and the live (database-backed)
+ * site should pick up the new schedule. On the next read the stored schedule is
+ * replaced with the bundled one — seating & event details are left untouched.
+ */
+const SCHEDULE_VERSION = 2;
+
+/** What we actually persist: the app data plus the schedule version marker. */
+type StoredData = AppData & { scheduleVersion?: number };
+
 const DATA_DIR = path.join(process.cwd(), "data");
 const SEATING_FILE = path.join(DATA_DIR, "seating.json");
 const EVENT_FILE = path.join(DATA_DIR, "event.json");
@@ -67,10 +77,28 @@ export async function getAllData(): Promise<AppData> {
   if (sql) {
     await sql`CREATE TABLE IF NOT EXISTS app_state (id text PRIMARY KEY, data jsonb NOT NULL)`;
     const rows = await sql`SELECT data FROM app_state WHERE id = ${ROW_ID}`;
-    const stored = (rows[0]?.data ?? null) as AppData | null;
-    if (stored && Array.isArray(stored.tables)) return stored;
+    const stored = (rows[0]?.data ?? null) as StoredData | null;
+    if (stored && Array.isArray(stored.tables)) {
+      // Force the bundled schedule when it's been updated in code, leaving the
+      // admin-managed seating & event details intact.
+      if ((stored.scheduleVersion ?? 0) < SCHEDULE_VERSION) {
+        const refreshed: StoredData = {
+          ...stored,
+          program: programSeed as unknown as ProgramData,
+          scheduleVersion: SCHEDULE_VERSION,
+        };
+        await sql`INSERT INTO app_state (id, data) VALUES (${ROW_ID}, ${JSON.stringify(
+          refreshed
+        )}::jsonb) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data`;
+        return refreshed;
+      }
+      return stored;
+    }
 
-    const seeded = seedData();
+    const seeded: StoredData = {
+      ...seedData(),
+      scheduleVersion: SCHEDULE_VERSION,
+    };
     await sql`INSERT INTO app_state (id, data) VALUES (${ROW_ID}, ${JSON.stringify(
       seeded
     )}::jsonb) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data`;
@@ -94,8 +122,9 @@ export async function saveAllData(data: AppData): Promise<void> {
   const sql = getSql();
   if (sql) {
     await sql`CREATE TABLE IF NOT EXISTS app_state (id text PRIMARY KEY, data jsonb NOT NULL)`;
+    const toStore: StoredData = { ...data, scheduleVersion: SCHEDULE_VERSION };
     await sql`INSERT INTO app_state (id, data) VALUES (${ROW_ID}, ${JSON.stringify(
-      data
+      toStore
     )}::jsonb) ON CONFLICT (id) DO UPDATE SET data = EXCLUDED.data`;
     return;
   }
