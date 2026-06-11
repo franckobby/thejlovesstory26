@@ -153,14 +153,14 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
   const section = (title: string, items: ProgramItem[]) => {
     ensure(24);
     doc.setFont("times", "normal");
-    doc.setFontSize(17);
+    doc.setFontSize(18);
     tc(INK);
-    doc.text(title, centerX, y, { align: "center" });
-    y += 3;
+    doc.text(title, marginX, y);
+    y += 2.5;
     dc(GOLD);
     doc.setLineWidth(0.4);
-    doc.line(centerX - 9, y, centerX + 9, y);
-    y += 7.5;
+    doc.line(marginX, y, marginX + 18, y);
+    y += 8;
 
     const timeW = 26;
     const railX = marginX + timeW + 6;
@@ -170,19 +170,19 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
     for (const it of items) {
       // ---- Measure everything first (for clean page breaks) ----
       doc.setFont("times", "normal");
-      doc.setFontSize(12.5);
+      doc.setFontSize(13);
       const titleLines = doc.splitTextToSize(it.title, textW) as string[];
 
       let descLines: string[] = [];
       if (it.description) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.6);
+        doc.setFontSize(9);
         descLines = doc.splitTextToSize(it.description, textW) as string[];
       }
 
       const groupBlocks = (it.groups ?? []).map((g) => {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.8);
+        doc.setFontSize(9.2);
         const itemLines = g.items.map(
           (m) => doc.splitTextToSize(m, textW - 2) as string[]
         );
@@ -190,24 +190,24 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       });
 
       let blockH = Math.max(
-        titleLines.length * 4.8 + descLines.length * 3.7,
-        6
+        titleLines.length * 4.9 + descLines.length * 3.85,
+        6.5
       );
       for (const gb of groupBlocks) {
-        blockH += 2.2;
-        if (gb.label) blockH += 4.0;
-        for (const il of gb.itemLines) blockH += il.length * 3.7;
+        blockH += 2.3;
+        if (gb.label) blockH += 4.1;
+        for (const il of gb.itemLines) blockH += il.length * 3.85;
       }
-      blockH += 3.5;
+      blockH += 3.3;
 
       ensure(blockH);
       const top = y;
 
       // Time
       doc.setFont("times", "italic");
-      doc.setFontSize(9.5);
+      doc.setFontSize(10);
       tc(GOLD_DEEP);
-      doc.text(it.time, marginX + timeW, y + 0.5, { align: "right" });
+      doc.text(it.time, marginX + timeW, y + 0.2, { align: "right" });
 
       // Rail + dot
       dc(GOLD);
@@ -220,47 +220,47 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
 
       // Title
       doc.setFont("times", "normal");
-      doc.setFontSize(12.5);
+      doc.setFontSize(13);
       tc(INK);
       let ty = y;
       for (const line of titleLines) {
         doc.text(line, textX, ty);
-        ty += 4.8;
+        ty += 4.9;
       }
       // Description
       if (descLines.length) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.6);
+        doc.setFontSize(9);
         tc(INK_SOFT);
-        ty += 0.4;
+        ty += 0.5;
         for (const line of descLines) {
           doc.text(line, textX, ty);
-          ty += 3.7;
+          ty += 3.85;
         }
       }
       // Grouped sub-lists (participants / roles)
       for (const gb of groupBlocks) {
-        ty += 2.2;
+        ty += 2.3;
         if (gb.label) {
           doc.setFont("helvetica", "normal");
-          doc.setFontSize(7);
+          doc.setFontSize(7.2);
           tc(GOLD_DEEP);
           doc.text(gb.label.toUpperCase(), textX, ty, { charSpace: 0.6 });
-          ty += 4.0;
+          ty += 4.1;
         }
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(8.8);
+        doc.setFontSize(9.2);
         tc(INK_SOFT);
         for (const il of gb.itemLines) {
           for (const line of il) {
             doc.text(line, textX, ty);
-            ty += 3.7;
+            ty += 3.85;
           }
         }
       }
       y = top + blockH;
     }
-    y += 5;
+    y += 5.5;
   };
 
   section("The Ceremony", program.ceremony);
