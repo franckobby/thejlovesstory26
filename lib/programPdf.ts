@@ -122,31 +122,38 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
   ornament(y);
   y = 50;
 
-  // ---- Slim personalized line ----
+  // ---- Personalized place card ----
   if (guestName) {
-    const h = 13;
+    const h = 24;
     fc(CREAM);
     dc(GOLD);
-    doc.setLineWidth(0.4);
-    doc.roundedRect(marginX, y, contentW, h, 1.2, 1.2, "FD");
+    doc.setLineWidth(0.5);
+    doc.roundedRect(marginX, y, contentW, h, 1.5, 1.5, "FD");
 
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(6.5);
+    doc.setFontSize(7);
     tc(GOLD_DEEP);
-    doc.text("PREPARED FOR", centerX, y + 5, {
+    doc.text("PREPARED FOR", centerX, y + 7, {
       align: "center",
-      charSpace: 1.2,
+      charSpace: 1.4,
     });
 
-    const detail = [guestName, tableLabel || null, groupLabel || null]
-      .filter(Boolean)
-      .join("    ·    ");
     doc.setFont("times", "normal");
     tc(INK);
-    doc.setFontSize(fitSize(detail, contentW - 16, 12, 8));
-    doc.text(detail, centerX, y + 10.5, { align: "center" });
+    doc.setFontSize(fitSize(guestName, contentW - 20, 14, 10));
+    doc.text(guestName, centerX, y + 14, { align: "center" });
 
-    y += h + 8;
+    const seat = [tableLabel || null, groupLabel || null]
+      .filter(Boolean)
+      .join("    ·    ");
+    if (seat) {
+      doc.setFont("times", "normal");
+      tc(GOLD_DEEP);
+      doc.setFontSize(fitSize(seat, contentW - 20, 15, 10));
+      doc.text(seat, centerX, y + 20.5, { align: "center" });
+    }
+
+    y += h + 12;
   }
 
   // ---- Timeline section ----
