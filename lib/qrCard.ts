@@ -55,24 +55,11 @@ export function buildQrCardDoc(jsPDFCtor: any, opts: QrCardOptions): any {
   doc.setLineWidth(0.25);
   doc.rect(13, 13, pageW - 26, pageH - 26);
 
-  // Masthead
-  doc.setFont("times", "normal");
-  doc.setFontSize(15);
-  tc(GOLD_DEEP);
-  doc.text(event.monogram.toUpperCase(), cx, 36, { align: "center", charSpace: 3 });
-
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  tc(GOLD_DEEP);
-  doc.text("TOGETHER WITH THEIR FAMILIES", cx, 46, {
-    align: "center",
-    charSpace: 1.8,
-  });
-
+  // Names
   doc.setFont("times", "normal");
   tc(INK);
-  doc.setFontSize(fit(event.coupleNames, pageW - 60, 34, 20));
-  doc.text(event.coupleNames, cx, 62, { align: "center" });
+  doc.setFontSize(fit(event.coupleNames, pageW - 56, 34, 20));
+  doc.text(event.coupleNames, cx, 60, { align: "center" });
 
   const dateLong = new Date(event.date).toLocaleDateString("en-US", {
     weekday: "long",
@@ -83,26 +70,25 @@ export function buildQrCardDoc(jsPDFCtor: any, opts: QrCardOptions): any {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(9.5);
   tc(INK_SOFT);
-  doc.text(dateLong.toUpperCase(), cx, 72, { align: "center", charSpace: 1 });
-  doc.text(`${event.ceremonyVenue} · ${event.city}`.toUpperCase(), cx, 78, {
+  doc.text(`${dateLong} · ${event.city}`.toUpperCase(), cx, 70, {
     align: "center",
     charSpace: 1,
   });
 
-  ornament(88);
+  ornament(80);
 
   // Prompt
   doc.setFont("times", "normal");
   doc.setFontSize(30);
   tc(INK);
-  doc.text("Find Your Seat", cx, 108, { align: "center" });
+  doc.text("Find Your Seat", cx, 100, { align: "center" });
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(11);
   tc(INK_SOFT);
-  let iy = 119;
+  let iy = 111;
   for (const line of doc.splitTextToSize(
-    "Scan the code below with your phone camera to find your table and view the schedule.",
+    "Scan with your phone camera to find your table and view the schedule.",
     pageW - 70
   ) as string[]) {
     doc.text(line, cx, iy, { align: "center" });
@@ -110,10 +96,10 @@ export function buildQrCardDoc(jsPDFCtor: any, opts: QrCardOptions): any {
   }
 
   // QR code in a bordered white tile
-  const qrSize = 86;
+  const qrSize = 116;
   const tile = qrSize + 16;
   const tileX = cx - tile / 2;
-  const tileY = 134;
+  const tileY = 122;
   fc([255, 255, 255]);
   dc(GOLD);
   doc.setLineWidth(0.5);
@@ -131,19 +117,10 @@ export function buildQrCardDoc(jsPDFCtor: any, opts: QrCardOptions): any {
 
   // URL caption
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
+  doc.setFontSize(9.5);
   tc(INK_SOFT);
   const shown = url.replace(/^https?:\/\//, "");
-  doc.text(shown, cx, tileY + tile + 9, { align: "center" });
-
-  // Hashtag footer
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  tc(GOLD_DEEP);
-  doc.text(event.hashtag.toUpperCase(), cx, pageH - 22, {
-    align: "center",
-    charSpace: 1,
-  });
+  doc.text(shown, cx, tileY + tile + 10, { align: "center", charSpace: 0.5 });
 
   return doc;
 }
