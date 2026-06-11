@@ -151,38 +151,38 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
 
   // ---- Timeline section ----
   const section = (title: string, items: ProgramItem[]) => {
-    ensure(24);
+    ensure(30);
     doc.setFont("times", "normal");
-    doc.setFontSize(18);
+    doc.setFontSize(21);
     tc(INK);
     doc.text(title, marginX, y);
-    y += 2.5;
+    y += 3;
     dc(GOLD);
     doc.setLineWidth(0.4);
-    doc.line(marginX, y, marginX + 18, y);
-    y += 8;
+    doc.line(marginX, y, marginX + 20, y);
+    y += 12;
 
-    const timeW = 26;
+    const timeW = 30;
     const railX = marginX + timeW + 6;
-    const textX = railX + 7;
+    const textX = railX + 8;
     const textW = contentW - (textX - marginX);
 
     for (const it of items) {
       // ---- Measure everything first (for clean page breaks) ----
       doc.setFont("times", "normal");
-      doc.setFontSize(13);
+      doc.setFontSize(15);
       const titleLines = doc.splitTextToSize(it.title, textW) as string[];
 
       let descLines: string[] = [];
       if (it.description) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
+        doc.setFontSize(10);
         descLines = doc.splitTextToSize(it.description, textW) as string[];
       }
 
       const groupBlocks = (it.groups ?? []).map((g) => {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9.2);
+        doc.setFontSize(10.5);
         const itemLines = g.items.map(
           (m) => doc.splitTextToSize(m, textW - 2) as string[]
         );
@@ -190,77 +190,77 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
       });
 
       let blockH = Math.max(
-        titleLines.length * 4.9 + descLines.length * 3.85,
-        6.5
+        titleLines.length * 6.2 + descLines.length * 5.0,
+        7
       );
       for (const gb of groupBlocks) {
-        blockH += 2.3;
-        if (gb.label) blockH += 4.1;
-        for (const il of gb.itemLines) blockH += il.length * 3.85;
+        blockH += 4.5;
+        if (gb.label) blockH += 5.2;
+        for (const il of gb.itemLines) blockH += il.length * 5.0;
       }
-      blockH += 3.3;
+      blockH += 9;
 
       ensure(blockH);
       const top = y;
 
       // Time
       doc.setFont("times", "italic");
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       tc(GOLD_DEEP);
-      doc.text(it.time, marginX + timeW, y + 0.2, { align: "right" });
+      doc.text(it.time, marginX + timeW, y + 0.6, { align: "right" });
 
       // Rail + dot
       dc(GOLD);
-      doc.setLineWidth(0.25);
-      doc.line(railX, top - 2.5, railX, top + blockH - 3);
+      doc.setLineWidth(0.3);
+      doc.line(railX, top - 3, railX, top + blockH - 4);
       fc(GOLD);
-      doc.circle(railX, top - 0.6, 1.1, "F");
+      doc.circle(railX, top - 0.8, 1.3, "F");
       fc(CREAM);
-      doc.circle(railX, top - 0.6, 0.45, "F");
+      doc.circle(railX, top - 0.8, 0.55, "F");
 
       // Title
       doc.setFont("times", "normal");
-      doc.setFontSize(13);
+      doc.setFontSize(15);
       tc(INK);
       let ty = y;
       for (const line of titleLines) {
         doc.text(line, textX, ty);
-        ty += 4.9;
+        ty += 6.2;
       }
       // Description
       if (descLines.length) {
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9);
+        doc.setFontSize(10);
         tc(INK_SOFT);
-        ty += 0.5;
+        ty += 0.8;
         for (const line of descLines) {
           doc.text(line, textX, ty);
-          ty += 3.85;
+          ty += 5.0;
         }
       }
       // Grouped sub-lists (participants / roles)
       for (const gb of groupBlocks) {
-        ty += 2.3;
+        ty += 4.5;
         if (gb.label) {
           doc.setFont("helvetica", "normal");
-          doc.setFontSize(7.2);
+          doc.setFontSize(8);
           tc(GOLD_DEEP);
-          doc.text(gb.label.toUpperCase(), textX, ty, { charSpace: 0.6 });
-          ty += 4.1;
+          doc.text(gb.label.toUpperCase(), textX, ty, { charSpace: 0.7 });
+          ty += 5.2;
         }
         doc.setFont("helvetica", "normal");
-        doc.setFontSize(9.2);
+        doc.setFontSize(10.5);
         tc(INK_SOFT);
         for (const il of gb.itemLines) {
           for (const line of il) {
             doc.text(line, textX, ty);
-            ty += 3.85;
+            ty += 5.0;
           }
         }
       }
       y = top + blockH;
     }
-    y += 5.5;
+    y += 10;
   };
 
   section("The Ceremony", program.ceremony);
