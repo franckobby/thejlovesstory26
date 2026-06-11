@@ -98,33 +98,32 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   tc(GOLD_DEEP);
-  doc.text("WEDDING DAY SCHEDULE", centerX, y, {
-    align: "center",
-    charSpace: 1.8,
-  });
+  doc.text("WEDDING DAY SCHEDULE", marginX, y, { charSpace: 1.8 });
 
   y = 31;
   doc.setFont("times", "normal");
   tc(INK);
-  doc.setFontSize(fitSize(event.coupleNames, contentW, 23, 16));
-  doc.text(event.coupleNames, centerX, y, { align: "center" });
+  doc.setFontSize(fitSize(event.coupleNames, contentW, 24, 16));
+  doc.text(event.coupleNames, marginX, y);
 
-  y = 37.5;
+  y = 38;
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
   tc(INK_SOFT);
-  doc.text(`${dateLong}  ·  ${event.city}`.toUpperCase(), centerX, y, {
-    align: "center",
+  doc.text(`${dateLong}  ·  ${event.city}`.toUpperCase(), marginX, y, {
     charSpace: 0.8,
   });
 
   y = 43;
-  ornament(y);
-  y = 50;
+  dc(GOLD);
+  doc.setLineWidth(0.3);
+  doc.line(marginX, y, marginX + contentW, y);
+  y = 51;
 
   // ---- Personalized place card ----
   if (guestName) {
     const h = 24;
+    const pad = 10;
     fc(CREAM);
     dc(GOLD);
     doc.setLineWidth(0.5);
@@ -133,15 +132,12 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7);
     tc(GOLD_DEEP);
-    doc.text("PREPARED FOR", centerX, y + 7, {
-      align: "center",
-      charSpace: 1.4,
-    });
+    doc.text("PREPARED FOR", marginX + pad, y + 7.5, { charSpace: 1.4 });
 
     doc.setFont("times", "normal");
     tc(INK);
-    doc.setFontSize(fitSize(guestName, contentW - 20, 14, 10));
-    doc.text(guestName, centerX, y + 14, { align: "center" });
+    doc.setFontSize(fitSize(guestName, contentW - pad * 2, 14, 10));
+    doc.text(guestName, marginX + pad, y + 14.5);
 
     const seat = [tableLabel || null, groupLabel || null]
       .filter(Boolean)
@@ -149,8 +145,8 @@ export function buildProgramDoc(jsPDFCtor: any, opts: ProgramPdfOptions): Doc {
     if (seat) {
       doc.setFont("times", "normal");
       tc(GOLD_DEEP);
-      doc.setFontSize(fitSize(seat, contentW - 20, 15, 10));
-      doc.text(seat, centerX, y + 20.5, { align: "center" });
+      doc.setFontSize(fitSize(seat, contentW - pad * 2, 15, 10));
+      doc.text(seat, marginX + pad, y + 20.5);
     }
 
     y += h + 12;
