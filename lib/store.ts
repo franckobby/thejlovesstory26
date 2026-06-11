@@ -28,7 +28,7 @@ const ROW_ID = "main";
  * site should pick up the new schedule. On the next read the stored schedule is
  * replaced with the bundled one — seating & event details are left untouched.
  */
-const SCHEDULE_VERSION = 2;
+const SCHEDULE_VERSION = 3;
 
 /** What we actually persist: the app data plus the schedule version marker. */
 type StoredData = AppData & { scheduleVersion?: number };
