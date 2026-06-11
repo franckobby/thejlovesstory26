@@ -2,23 +2,52 @@
 
 import { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
+import type { EventDetails } from "@/lib/types";
+import { generateQrCardPdf } from "@/lib/qrCard";
 
-export function QRPanel() {
+// A large off-screen render so the downloaded PNG / PDF QR is crisp in print.
+const EXPORT_SIZE = 1024;
+
+export function QRPanel({ event }: { event: EventDetails }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
+  const [busy, setBusy] = useState<"pdf" | "png" | null>(null);
+  const exportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setUrl(window.location.origin);
   }, []);
 
+  const exportCanvas = () =>
+    exportRef.current?.querySelector("canvas") as HTMLCanvasElement | null;
+
   function downloadPNG() {
-    const canvas = wrapRef.current?.querySelector("canvas");
-    if (!canvas) return;
-    const a = document.createElement("a");
-    a.href = canvas.toDataURL("image/png");
-    a.download = "josephine-jeffrey-seating-qr.png";
-    a.click();
+    const canvas = exportCanvas();
+    if (!canvas || busy) return;
+    setBusy("png");
+    try {
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "josephine-jeffrey-seating-qr.png";
+      a.click();
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function downloadPDF() {
+    const canvas = exportCanvas();
+    if (!canvas || busy) return;
+    setBusy("pdf");
+    try {
+      await generateQrCardPdf({
+        event,
+        url,
+        qrDataUrl: canvas.toDataURL("image/png"),
+      });
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function copyLink() {
@@ -33,13 +62,28 @@ export function QRPanel() {
 
   return (
     <div className="mx-auto max-w-3xl">
+      {/* High-resolution QR rendered off-screen, used for PNG + PDF export. */}
+      <div
+        ref={exportRef}
+        aria-hidden
+        className="pointer-events-none absolute -left-[9999px] top-0 opacity-0"
+      >
+        {url && (
+          <QRCodeCanvas
+            value={url}
+            size={EXPORT_SIZE}
+            level="M"
+            marginSize={2}
+            fgColor="#161d14"
+            bgColor="#ffffff"
+          />
+        )}
+      </div>
+
       <div className="grid items-center gap-10 md:grid-cols-2">
-        {/* QR tile */}
+        {/* QR tile preview */}
         <div className="flex justify-center">
-          <div
-            ref={wrapRef}
-            className="card-lux flex flex-col items-center gap-4 p-7"
-          >
+          <div className="card-lux flex flex-col items-center gap-4 p-7">
             <div className="rounded-sm border border-gold/30 bg-white p-4">
               {url ? (
                 <QRCodeCanvas
@@ -65,8 +109,10 @@ export function QRPanel() {
           <p className="eyebrow">Guest Link</p>
           <h3 className="mt-3 font-serif text-2xl text-ink">Your QR Code</h3>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-            Print this code on table cards or place it at the entrance. Guests
-            scan it to find their seat and view the schedule.
+            Download the <strong>printable poster</strong> (a ready-to-print A4
+            with your names and instructions) to display at the entrance, or grab
+            a high-resolution PNG of just the code for table cards. Guests scan it
+            to find their seat and view the schedule.
           </p>
 
           <label className="mt-6 block text-[0.65rem] uppercase tracking-[0.2em] text-gold-deep">
@@ -80,12 +126,23 @@ export function QRPanel() {
           />
           <p className="mt-2 text-xs text-ink-soft/80">
             Tip: after you deploy, paste your live web address here and
-            re-download the code.
+            re-download.
           </p>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button onClick={downloadPNG} className="btn-gold">
-              Download PNG
+            <button
+              onClick={downloadPDF}
+              disabled={busy !== null || !url}
+              className="btn-gold"
+            >
+              {busy === "pdf" ? "Preparing…" : "Download Printable Poster"}
+            </button>
+            <button
+              onClick={downloadPNG}
+              disabled={busy !== null || !url}
+              className="btn-outline"
+            >
+              Download QR (PNG)
             </button>
             <button onClick={copyLink} className="btn-outline">
               {copied ? "Copied!" : "Copy Link"}
