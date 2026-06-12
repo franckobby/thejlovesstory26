@@ -282,7 +282,7 @@ function SeatReveal({
           className="flex items-baseline justify-center gap-3"
         >
           <span className="font-serif text-xl text-ink-soft">Table</span>
-          <span className="shimmer-text font-serif text-7xl font-medium leading-none sm:text-8xl">
+          <span className="shimmer-text font-sans text-7xl font-semibold leading-none tracking-tight tabular-nums sm:text-8xl">
             {tableNumber}
           </span>
         </motion.div>
