@@ -113,7 +113,7 @@ export default async function ProgramPage({
               </span>
               <span className="font-serif text-lg text-ink">{guestName}</span>
               <span className="text-gold/50">·</span>
-              <span className="font-serif text-lg text-ink">
+              <span className="font-sans text-lg font-medium tabular-nums text-ink">
                 {tableLabel || "—"}
               </span>
               {groupLabel && (
