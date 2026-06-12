@@ -1,5 +1,32 @@
 import type { SeatMatch, Table } from "./types";
 
+/** Honorifics/titles to skip when picking a first name for a greeting. */
+const NAME_TITLES = new Set([
+  "mr", "mrs", "ms", "mss", "miss", "mister", "messrs",
+  "rev", "reverend", "revd", "ps", "pst", "pastor", "apostle", "bishop",
+  "deacon", "deaconess", "dr", "prof", "professor", "elder", "eld",
+  "evangelist", "evang", "minister", "mama", "papa", "maa", "daddy", "mummy",
+  "auntie", "aunty", "aunt", "uncle", "nana", "sir", "madam", "chief",
+  "hon", "honorable", "honourable", "engr", "ing", "capt", "col", "lt",
+]);
+
+/**
+ * Best-effort first name for a personal greeting. Skips leading honorifics
+ * (e.g. "Mr Peter Sosi" → "Peter", "Rev. Saka Ntiamoah" → "Saka") so the
+ * greeting never reads "Welcome, Mr.". Never strips the only remaining token.
+ */
+export function greetingName(full: string): string {
+  const tokens = full.trim().split(/\s+/).filter(Boolean);
+  if (tokens.length === 0) return full;
+  let i = 0;
+  while (i < tokens.length - 1) {
+    const t = tokens[i].toLowerCase().replace(/[^a-z]/g, "");
+    if (t && NAME_TITLES.has(t)) i++;
+    else break;
+  }
+  return tokens[i];
+}
+
 /** Lowercase, strip accents & punctuation, collapse whitespace. */
 export function normalize(s: string): string {
   return s

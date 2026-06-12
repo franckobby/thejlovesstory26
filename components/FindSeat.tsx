@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import type { SeatMatch } from "@/lib/types";
+import { greetingName } from "@/lib/match";
 import { Ornament } from "./Ornament";
 
 const EASE = [0.2, 0.8, 0.2, 1] as const;
@@ -201,7 +202,7 @@ function SeatReveal({
         transition={{ delay: 0.36 }}
         className="mt-6 font-serif text-2xl italic text-ink"
       >
-        Welcome, {match.name.split(" ")[0]}.
+        Welcome, {greetingName(match.name)}.
       </motion.p>
 
       {match.tablemates.length > 0 && (
