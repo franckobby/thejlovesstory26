@@ -11,20 +11,26 @@ const NAME_TITLES = new Set([
 ]);
 
 /**
- * Best-effort first name for a personal greeting. Skips leading honorifics
- * (e.g. "Mr Peter Sosi" → "Peter", "Rev. Saka Ntiamoah" → "Saka") so the
- * greeting never reads "Welcome, Mr.". Never strips the only remaining token.
+ * Best-effort name for a personal greeting: the first name, but keeping any
+ * leading honorific so titled guests are addressed respectfully —
+ * "Mr Peter Sosi" → "Mr Peter", "Rev. Saka Ntiamoah" → "Rev. Saka",
+ * "Mama Comfort" → "Mama Comfort", "Francis Aggrey" → "Francis".
+ * Never strips the only remaining token.
  */
 export function greetingName(full: string): string {
   const tokens = full.trim().split(/\s+/).filter(Boolean);
   if (tokens.length === 0) return full;
+  const titles: string[] = [];
   let i = 0;
   while (i < tokens.length - 1) {
     const t = tokens[i].toLowerCase().replace(/[^a-z]/g, "");
-    if (t && NAME_TITLES.has(t)) i++;
-    else break;
+    if (t && NAME_TITLES.has(t)) {
+      titles.push(tokens[i]);
+      i++;
+    } else break;
   }
-  return tokens[i];
+  const first = tokens[i];
+  return titles.length ? `${titles.join(" ")} ${first}` : first;
 }
 
 /** Lowercase, strip accents & punctuation, collapse whitespace. */
